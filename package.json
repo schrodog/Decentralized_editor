@@ -14,6 +14,8 @@
     "@babel/preset-env": "^7.1.0",
     "babel-preset-latest": "^6.24.1",
     "brace": "^0.11.1",
+    "ip": "^1.1.5",
+    "leveldown": "^3.0.0",
     "webpack-dev-server": "^3.1.9",
     "y-array": "^10.1.4",
     "y-map": "^10.1.3",

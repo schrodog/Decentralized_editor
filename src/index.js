@@ -9,6 +9,12 @@ Y.extend(yArray, yWebsocketsClient, yMemory, yArray, yMap, yText)
 import * as ace from 'brace'
 import 'brace/mode/javascript'
 import 'brace/theme/chrome'
+import ip from 'ip'
+import os from 'os'
+
+// alert('hi')
+console.log(ip.address());
+console.log(os.networkInterfaces());
 
 Y({
   db: {
@@ -16,12 +22,16 @@ Y({
   },
   connector: {
     name: 'websockets-client',
-    // url: 'http://127.0.0.1:1234',
+    url: `http://${location.hostname}:1234`,
     room: 'ace-example'
+  },
+  sourceDir: 'node_modules',
+  share: {
+    text: 'Text'
   }
 }).then( y => {
 
-  console.log(y)
+  // alert('y')
   
   window.yAce = y
   
@@ -30,8 +40,11 @@ Y({
   editor.setTheme('ace/theme/chrome')
   editor.getSession().setMode('ace/mode/javascript')
   
-  // y.define('ace', Y.Text).bindAce(editor)
-})
+
+  console.log(ace);
+
+  y.share.text.bindAce(editor, {'aceClass': {'require': ace}})
+}).catch(err => alert(err))
 
 
 
