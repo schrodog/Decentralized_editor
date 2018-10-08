@@ -9,12 +9,8 @@ Y.extend(yArray, yWebsocketsClient, yMemory, yArray, yMap, yText)
 import * as ace from 'brace'
 import 'brace/mode/javascript'
 import 'brace/theme/chrome'
-import ip from 'ip'
-import os from 'os'
 
-// alert('hi')
-console.log(ip.address());
-console.log(os.networkInterfaces());
+
 
 Y({
   db: {
@@ -31,9 +27,10 @@ Y({
   }
 }).then( y => {
 
-  // alert('y')
   
   window.yAce = y
+
+  console.log('index.js[33]',y);
   
   // bind the textarea to a shared text element
   const editor = ace.edit('aceContainer')
@@ -41,7 +38,7 @@ Y({
   editor.getSession().setMode('ace/mode/javascript')
   
 
-  console.log(ace);
+  console.log(editor);
 
   y.share.text.bindAce(editor, {'aceClass': {'require': ace}})
 }).catch(err => alert(err))

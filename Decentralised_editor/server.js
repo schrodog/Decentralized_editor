@@ -7,7 +7,7 @@ new WebpackDevServer(webpack(config), {
   hot: true,
   historyApiFallback: true,
   contentBase: __dirname + '/',
-}).listen(3001, '0.0.0.0', function (err, result) {
+}).listen(3002, '0.0.0.0', function (err, result) {
   if (err) {
     console.log(err);
   }
