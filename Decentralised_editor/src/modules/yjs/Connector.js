@@ -252,7 +252,17 @@ module.exports = function (Y/* :any */) {
     */
     receiveMessage (sender/* :UserId */, message/* :Message */) {
       console.log('Connector.js[251]','sender',sender, message);
-      // alert(message)
+
+      // update other cursors
+      if (message.struct === 'Cursor'){
+        if(! window.yAce) return;
+        // console.log('Y', window.yAce.share.text)
+        // console.log('Y', window.yAce.share.text.aceInstances)
+        const ref = window.yAce.share.text.aceInstances[0].editor
+        const Cursor = ref.renderer.$cursorLayer
+        Cursor.updateOtherCursor(message.pos, Cursor.cursors[1], Cursor.config, ref)
+        return;
+      }
 
       if (sender === this.userId) {
         return Promise.resolve()
@@ -377,7 +387,7 @@ module.exports = function (Y/* :any */) {
               self._setSyncedWith(sender)
             })
           } else if (message.type === 'update' && canWrite(auth)) {
-            console.log('Connector.js[376]', auth, this.forwardToSyncingClients);
+            console.log('Connector.js[376]', auth, this.syncingClients);
             if (this.forwardToSyncingClients) {
               for (var client of this.syncingClients) {
                 console.log('Connector.js[379]',client,message);
@@ -385,9 +395,7 @@ module.exports = function (Y/* :any */) {
               }
             }
             if (this.y.db.forwardAppliedOperations) {
-              var delops = message.ops.filter(function (o) {
-                return o.struct === 'Delete'
-              })
+              const delops = message.ops.filter(o => o.struct === 'Delete')
               if (delops.length > 0) {
                 this.broadcastOps(delops)
               }

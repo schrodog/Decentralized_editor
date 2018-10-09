@@ -316,7 +316,7 @@ function extend (Y) {
 
       // always remember to do that after this.os.requestTransaction
       // (otherwise values might contain a undefined reference to type)
-      eventHandler.awaitAndPrematurelyCall([op])
+      // eventHandler.awaitAndPrematurelyCall([op])
     }
 
     observe (f) {

@@ -14547,6 +14547,11 @@ Editor.$uid = 0;
         };
     };
 
+    // this.setCursor = function(){
+    //     console.log(this.renderer.$cursorLayer)
+    //     this.renderer.$cursorLayer.updateOtherCursor(1)
+    // };
+
 
     this.$resetCursorStyle = function() {
         var style = this.$cursorStyle || "ace";
@@ -15785,7 +15790,7 @@ var Cursor = function(parentEl) {
     this.cursors = [];
     this.cursor = this.addCursor();
     this.otherCursor = this.addCursor(false);
-    this.otherCursor2 = this.addCursor(false);
+    // this.otherCursor2 = this.addCursor(false);
 
     // this.myCursor = document.getElementsByClassName("ace_myCursor")[0]
 
@@ -15924,16 +15929,33 @@ var Cursor = function(parentEl) {
         return {left : cursorLeft, top : cursorTop};
     };
 
-    this.updateOtherCursor = function(position, elem){
-        const pixelPos = this.getPixelPosition(position, true);
 
+    this.getPixelPosition_ref = function(position, config, ref) {
+        if (!config || !ref.session)
+            return {left : 0, top : 0};
 
+        if (!position)
+            position = ref.session.selection.getCursor();
+        var pos = ref.session.documentToScreenPosition(position);
+        var cursorLeft = ref.renderer.$cursorLayer.$padding + (ref.session.$bidiHandler.isBidiRow(pos.row, position.row)
+            ? ref.session.$bidiHandler.getPosLeft(pos.column)
+            : pos.column * config.characterWidth);
+
+        var cursorTop = (pos.row - config.firstRowScreen) * config.lineHeight;
+
+        return {left : cursorLeft, top : cursorTop};
+    };
+
+    this.updateOtherCursor = (position, elem, config, ref) => {
+        console.log('updateOtherCursor',position, elem, config)
+
+        const pixelPos = this.getPixelPosition_ref(position, config, ref);
         let style = elem.style;
 
         style.left = pixelPos.left + "px";
         style.top = pixelPos.top + "px";
-        style.width = (this.config ? this.config.characterWidth : '5' ) + 'px'
-        style.height = (this.config ? this.config.lineHeight : '10') + 'px'
+        style.width = (config ? config.characterWidth : '6') + 'px'
+        style.height = (config ? config.lineHeight : '12') + 'px'
 
         // console.log(this.getOptions());
         // style.width = this.config.characterWidth + "px";
@@ -15941,8 +15963,8 @@ var Cursor = function(parentEl) {
     }
 
     this.update = function(config) {
-        this.updateOtherCursor({row: 14, column: 5} , this.otherCursor)
-        this.updateOtherCursor({row: 15, column: 2} , this.otherCursor2)
+        // this.updateOtherCursor({row: 2, column: 3} , 1)
+        // this.updateOtherCursor({row: 15, column: 2} , this.otherCursor2)
 
 
         this.config = config;

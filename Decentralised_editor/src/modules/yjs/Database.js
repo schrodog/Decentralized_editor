@@ -306,6 +306,7 @@ module.exports = function (Y /* :any */) {
       * check if was deleted, apply a delete operation after op was applied
     */
     apply (ops) {
+      console.log('Database.js[309]', ops)
       this.opsReceivedTimestamp = new Date()
       for (var i = 0; i < ops.length; i++) {
         var o = ops[i]

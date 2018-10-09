@@ -282,7 +282,7 @@ function extend (Y) {
         aceInstance.setValue(this.toString())
 
         function aceCallback (delta) {
-          console.log('Text.js[285]','action', delta);
+          // console.log('Text.js[285]','action', delta);
 
           mutualExcluse(function () {
             var start
@@ -302,7 +302,8 @@ function extend (Y) {
           })
         }
 
-        // console.log(aceInstance.getSession().getDocument());
+        // window.setInterval(() => self.cursor(aceInstance.getCursorPosition()), 1000)
+
         aceInstance.on('change', aceCallback)
         aceInstance.getSession().getSelection().on('changeCursor', aceCallback)
 

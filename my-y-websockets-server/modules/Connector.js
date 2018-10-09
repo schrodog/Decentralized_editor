@@ -251,12 +251,13 @@ module.exports = function (Y/* :any */) {
       // console.log('Connector.js[251]', 'sender', sender, message, this.connections);
 
       if (sender === this.userId) {
+        console.log('Connector[254]', 'promise resolve()')
         return Promise.resolve()
       }
       this.log('Receive \'%s\' from %s', message.type, sender)
       this.logMessage('Message: %j', message)
       if (message.protocolVersion != null && message.protocolVersion !== this.protocolVersion) {
-        this.log(
+        console.log(
           `You tried to sync with a yjs instance that has a different protocol version
           (You: ${this.protocolVersion}, Client: ${message.protocolVersion}).
           The sync was stopped. You need to upgrade your dependencies (especially Yjs & the Connector)!
@@ -313,13 +314,15 @@ module.exports = function (Y/* :any */) {
               console.log('Connector.js[313]', sender, conn.syncingClients, conn.forwardToSyncingClients);
               answer.os = yield* this.getOperations(m.stateSet)
               conn.send(sender, answer)
+
               if (conn.forwardToSyncingClients) {
                 conn.syncingClients.push(sender)
                 console.log('Connector.js[319]', conn.syncingClients );
                 setTimeout(function () {
-                  conn.syncingClients = conn.syncingClients.filter(function (cli) {
-                    return cli !== sender
-                  })
+                  // conn.syncingClients = conn.syncingClients.filter(function (cli) {
+                  //   return cli !== sender
+                  // })
+                  console.log('Connector.js[325]', 'sender:', sender, conn.syncingClients)
                   conn.send(sender, {
                     type: 'sync done'
                   })
@@ -372,13 +375,25 @@ module.exports = function (Y/* :any */) {
               self._setSyncedWith(sender)
             })
           } else if (message.type === 'update' && canWrite(auth)) {
-            console.log('Connector.js[376]', auth, this.forwardToSyncingClients, this.syncingClients);
+            console.log('Connector.js[376]', sender, this.syncingClients);
+
 
             if (this.forwardToSyncingClients) {
-              for (var client of this.syncingClients) {
-                console.log('Connector.js[379]', client, message);
-                this.send(client, message)
+              // only send opponent's cursor position
+              if(message.struct === 'Cursor'){
+                for (var client of this.syncingClients) {
+                  if (sender !== client){
+                    console.log('Connector.js[385]',sender)
+                    this.send(client, message)
+                  }
+                }
+              } else {
+                for (var client of this.syncingClients) {
+                  console.log('Connector.js[379]', client);
+                  this.send(client, message)
+                }
               }
+
             }
             if (this.y.db.forwardAppliedOperations && message.struct !== 'Cursor') {
               var delops = message.ops.filter(function (o) {
