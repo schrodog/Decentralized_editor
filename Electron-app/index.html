@@ -18,11 +18,12 @@
   <body>
     <h1>Hello World!</h1>
 
-    <textarea>abc</textarea>
+    <textarea id="text">abc</textarea>
 
-    <script>
+    <script type="text/javascript">
       // You can also require other files to run in this process
-      // require('./renderer.js')
+      require('./renderer.js')
+      console.log(document)
     </script>
   </body>
 </html>
