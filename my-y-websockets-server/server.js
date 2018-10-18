@@ -2,13 +2,13 @@
 /* global process, global */
 'use strict'
 
-var Y = require('yjs')
+var Y = require('./yjs')
 
 Y.debug.log = console.log.bind(console)
 
 const log = Y.debug('y-websockets-server')
 var minimist = require('minimist')
-require('y-memory')(Y)
+require('./y-memory')(Y)
 try {
   require('y-leveldb')(Y)
 } catch (err) {}
@@ -18,7 +18,7 @@ try {
   require('./y-websockets-server.js')(Y)
 } catch (err) {
   // otherwise require global y-websockets-server
-  require('y-websockets-server')(Y)
+  require('./y-websockets-server')(Y)
 }
 
 var options = minimist(process.argv.slice(2), {

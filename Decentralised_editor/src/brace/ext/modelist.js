@@ -211,7 +211,8 @@ module.exports = {
 };
 
 });
-                (function() {
-                    ace.acequire(["ace/ext/modelist"], function() {});
-                })();
-            
+(function() {
+    ace.acequire(["ace/ext/modelist"], function() {});
+})();
+
+

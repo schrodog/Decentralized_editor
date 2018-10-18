@@ -20,19 +20,9 @@ const template = [
           fs.readFile(filePaths[0], 'utf8', (err, data) => {
             if (err) throw err;
             console.log('file.js[10]')
-            win.webContents.send('copy-to-textarea', data)
+            win.webContents.send('copy-to-textarea', {'filename': filePaths[0], 'data': data})
 
-            // win.loadUrl(`file://${__dirname}/index.html`)
-            // win.webContents.once('dom-ready', () => {
-            //   console.log('file.js[25]');
-            //   win.webContents.executeJavaScript(`document.getElementById("text").textContent = 'fffffffff';`)
-            // })
-            // ipcMain.on('copy-to-textarea', (event, arg) => {
-            //   console.log('file.js[11]', data);
-            //   event.sender.send('copy-to-textarea', data)
-            // })
           })
-        //  File.copy(filePaths[0])
         })
       }
     },

@@ -11,26 +11,29 @@ head
   style#ace-chrome
 
 body
-  div.ace_gutter
+  div#aceContainer
+    div.editor-frame
+    div.editor-frame
+    ...
+      div.editor-tab
+      div.ace_editor
+        div.ace_scroller
+          div.ace_content
+            div.ace_print-margin-layer
+            div.ace_marker-layer
 
-  div#aceContainer.ace_editor
-    div.ace_scroller
-      div.ace_content
-        div.ace_print-margin-layer
-        div.ace_marker-layer
+            div.ace_cursor-layer
+              div.ace_cursor( style={ left,top,width,height })
 
-        div.ace_cursor-layer
-          div.ace_cursor( style={ left,top,width,height })
-
-        div.ace_text-layer
-          div.ace_line
-            span.ace_identifier
-            span.ace_identifier
-            ...
-          div.ace_line
-            span.ace_identifier
-            ...
-          ...
+            div.ace_text-layer
+              div.ace_line
+                span.ace_identifier
+                span.ace_identifier
+                ...
+              div.ace_line
+                span.ace_identifier
+                ...
+              ...
 ```
 
 # Cursor
@@ -51,7 +54,8 @@ Text.js (aceCallback) > Utils (awaitAndPrematurelyCall) > Text.js (yCallback) > 
 ## no sync
 because treat two computer having same ip, so same user
 
-
+## run miltiple editor sync
+declare multiple sharing class in 
 
 
 

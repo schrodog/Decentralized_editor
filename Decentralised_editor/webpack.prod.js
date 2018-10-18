@@ -31,27 +31,22 @@ module.exports = {
 			{
 				include: [path.resolve(__dirname, 'src')],
 				loader: 'babel-loader',
-
 				options: {
 					plugins: ['syntax-dynamic-import'],
-
 					presets: [
 						"@babel/preset-env"
 					]
 				},
-
 				test: /\.js$/
 			},
 			{
 				test: /\.css$/,
-
 				use: [
 					{
 						loader: MiniCssExtractPlugin.loader
 					},
 					{
 						loader: 'css-loader',
-
 						options: {
 							sourceMap: true
 						}

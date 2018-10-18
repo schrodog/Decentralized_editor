@@ -258,7 +258,8 @@ module.exports = function (Y/* :any */) {
         if(! window.yAce) return;
         // console.log('Y', window.yAce.share.text)
         // console.log('Y', window.yAce.share.text.aceInstances)
-        const ref = window.yAce.share.text.aceInstances[0].editor
+        // const ref = window.yAce.share.text.aceInstances[0].editor
+        const ref = window.env.split.$editors[message.editorIndex]
         const Cursor = ref.renderer.$cursorLayer
         Cursor.updateOtherCursor(message.pos, Cursor.cursors[1], Cursor.config, ref)
         return;

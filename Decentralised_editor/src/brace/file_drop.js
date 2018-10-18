@@ -28,11 +28,11 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-define(function (require, exports, module) {
+ace.define("ace/file_drop", ["require", "exports", "module"], function (require, exports, module) {
 
-  var config = require("../../lib/ace/config");
-  var event = require("../../lib/ace/lib/event");
-  var modelist = require("../../lib/ace/ext/modelist");
+  var config = require("ace/config");
+  var event = require("ace/lib/event");
+  var modelist = require("ace/ext/modelist");
 
   module.exports = function (editor) {
     console.log('file_drop[38]', 'add listener');
@@ -66,7 +66,7 @@ define(function (require, exports, module) {
     });
   };
 
-  var Editor = require("../../lib/ace/editor").Editor;
+  var Editor = require("ace/editor").Editor;
   config.defineOptions(Editor.prototype, "editor", {
     loadDroppedFile: {
       set: function () {

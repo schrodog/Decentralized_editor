@@ -1,18 +1,18 @@
 // import {loadWorkspace} from './tree_navigation.js'
 
-define(function(require, exports, module) {
+ace.define(function(require, exports, module) {
   "use strict";
 
   const fileDrop = require("./file_drop")
   
   const env = {}
   
-  const workerModule = require('../../lib/ace/worker/worker_client')
-  const theme = require('../../lib/ace/theme/textmate')
+  const workerModule = require('ace/worker/worker_client')
+  const theme = require('ace/theme/textmate')
   workerModule.WorkerClient = workerModule.UIWorkerClient
   
   const container = document.getElementById("editor-container")
-  const Split = require("../../lib/ace/split").Split
+  const Split = require("ace/split").Split
   let initEditor = 2
   const split = new Split(container, theme, initEditor)
   split.setOrientation(0)

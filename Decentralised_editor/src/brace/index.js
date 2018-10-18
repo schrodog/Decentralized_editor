@@ -15947,9 +15947,10 @@ var Cursor = function(parentEl) {
     };
 
     this.updateOtherCursor = (position, elem, config, ref) => {
-        console.log('updateOtherCursor',position, elem, config)
-
+        
         const pixelPos = this.getPixelPosition_ref(position, config, ref);
+        // console.log('updateOtherCursor',position, elem, config)
+        console.log('updateOtherCursor', pixelPos);
         let style = elem.style;
 
         style.left = pixelPos.left + "px";
@@ -20238,7 +20239,447 @@ dom.importCssString("\
 
 });
 
-ace.define("ace/ace",["require","exports","module","ace/lib/fixoldbrowsers","ace/lib/dom","ace/lib/event","ace/editor","ace/edit_session","ace/undomanager","ace/virtual_renderer","ace/worker/worker_client","ace/keyboard/hash_handler","ace/placeholder","ace/multi_select","ace/mode/folding/fold_mode","ace/theme/textmate","ace/ext/error_marker","ace/config"], function(acequire, exports, module) {
+
+/** file drop */
+ace.define("ace/file_drop", ["require", "exports", "module"], function (require, exports, module) {
+
+    // var config = require("ace/config");
+    var event = require("ace/lib/event");
+    var modelist = require("ace/ext/modelist");
+
+    // var FileDrop = function(editor){
+    //     this.editor = editor
+    // };
+
+    exports.FileDrop = function (editor) {
+        console.log('file_drop[38]', 'add listener', editor);
+
+        event.addListener(editor.container, "dragover", function (e) {
+            var types = e.dataTransfer.types;
+            console.log('file_drop.js[40]')
+            if (types && Array.prototype.indexOf.call(types, 'Files') !== -1)
+                return event.preventDefault(e);
+        });
+
+        event.addListener(editor.container, "drop", function (e) {
+            var file;
+            try {
+                file = e.dataTransfer.files[0];
+                if (window.FileReader) {
+                    var reader = new FileReader();
+                    reader.onload = function () {
+                        var mode = modelist.getModeForPath(file.name);
+                        console.log('file_drop.js[52]', file.name, reader.result, mode)
+
+                        editor.session.doc.setValue(reader.result);
+                        editor.session.setMode(mode.mode);
+                        editor.session.modeName = mode.name;
+                    };
+                    reader.readAsText(file);
+                }
+                return event.preventDefault(e);
+            } catch (err) {
+                return event.stopEvent(e);
+            }
+        });
+    }
+
+    // var Editor = require("ace/editor").Editor;
+    // config.defineOptions(Editor.prototype, "editor", {
+    //     loadDroppedFile: {
+    //         set: function () {
+    //             module.exports(this);
+    //         },
+    //         value: true
+    //     }
+    // });
+    // ).call(FileDrop.prototype);
+
+    // exports.FileDrop = FileDrop;
+});
+
+/** split */
+ace.define("ace/split", ["require", "exports", "module"], function (require, exports, module) {
+    "use strict";
+
+    var oop = require("ace/lib/oop");
+    var lang = require("ace/lib/lang");
+    var EventEmitter = require("ace/lib/event_emitter").EventEmitter;
+
+    var Editor = require("ace/editor").Editor;
+    var Renderer = require("ace/virtual_renderer").VirtualRenderer;
+    var EditSession = require("ace/edit_session").EditSession;
+
+    /** 
+     * @class Split
+     *
+     **/
+
+
+    var Split = function (container, theme, splits) {
+        this.BELOW = 1;
+        this.BESIDE = 0;
+
+        this.$container = container;
+        this.$theme = theme;
+        this.$splits = 0;
+        this.$headerHeight = 25;
+        this.$headerStart = 41;
+        this.$editorCSS = "";
+        this.$editors = [];
+        this.$headers = [];
+        this.$frames = [];
+        this.$orientation = this.BESIDE;
+
+        this.setSplits(splits || 1);
+        this.$cEditor = this.$editors[0];
+
+
+        this.on("focus", function (editor) {
+            this.$cEditor = editor;
+        }.bind(this));
+    };
+
+    (function () {
+
+        oop.implement(this, EventEmitter);
+
+        this.$createEditor = function () {
+            const frame = document.createElement("div")
+            frame.className = "editor-frame"
+            frame.style.cssText = "display: flex; flex-grow: 1; flex-direction: column;"
+            // frame.style.cssText = "position: absolute; top:0px; bottom:0px";
+
+            // create header
+            const header = document.createElement("div")
+            header.textContent = 'Untitled'
+            header.className = 'editor-tab'
+            // header.style.cssText = `position: absolute; top: 0px; height: ${this.$headerHeight}px; left: ${this.$headerStart}px; color: black;`
+            header.style.cssText = `flex-grow: 0; flex-shrink: 0; flex-basis: ${this.$headerHeight}px; padding-left: ${this.$headerStart}px; font-size: 16px;`
+
+            // create wrapper
+            const wrapper = document.createElement("div")
+            wrapper.style.cssText = 'flex-grow: 1;';
+
+            // create editor
+            var el = document.createElement("div");
+            el.className = this.$editorCSS;
+            // el.style.cssText = "position: absolute; top:0px; bottom:0px";
+            // el.style.cssText = "width: 100%; height: 100%; flex-grow: 1;"
+            el.style.cssText = "flex-grow: 1;"
+            // wrapper.appendChild(el)
+            frame.appendChild(header)
+            frame.appendChild(el)
+
+            this.$container.appendChild(frame);
+            var editor = new Editor(new Renderer(el, this.$theme));
+
+            // // set tab Name        
+            // const handler = {
+            //     set: function(obj, prop, value){
+            //         if(prop === 'tabName'){
+            //             obj[prop] = value
+            //             obj.header.textContent = value
+            //         }
+            //         return true;
+            //     }
+            // }
+            // let editor = new Proxy( _editor, handler)
+
+            editor.on("focus", function () {
+                this._emit("focus", editor);
+            }.bind(this));
+
+            editor.header = header;
+            editor.frameContainer = frame
+            editor.currentIndex = this.$editors.length
+
+            this.$editors.push(editor);
+            // this.$headers.push(header);
+            editor.setFontSize(this.$fontSize);
+
+            return editor;
+        };
+
+        // this.$createHeader = function(editor){
+        //     const el = document.createElement("div")
+        //     el.textContent = 'tab'
+        //     el.style.cssText = "position: absolute; top: 0px; height: 15px; background-color: #AAAAAA"
+        //     return editor
+        // }
+
+        this.setSplits = function (splits) {
+            var editor;
+            if (splits < 1) {
+                throw "The number of splits have to be > 0!";
+            }
+
+            // this.$splits = number of splits currently
+            if (splits == this.$splits) {
+                return;
+            } else if (splits > this.$splits) {
+                while (this.$splits < this.$editors.length && this.$splits < splits) {
+                    editor = this.$editors[this.$splits];
+                    // add editor to container
+                    this.$container.appendChild(editor.container);
+                    editor.setFontSize(this.$fontSize);
+                    this.$splits++;
+                }
+                while (this.$splits < splits) {
+                    this.$createEditor();
+                    this.$splits++;
+                }
+            } else {
+                // remove extra editor
+                while (this.$splits > splits) {
+                    editor = this.$editors[this.$splits - 1];
+                    // console.log(this.$editors.indexOf(editor));
+                    this.$editors.splice(this.$splits - 1, 1)
+                    this.$container.removeChild(editor.frameContainer);
+                    this.$splits--;
+                }
+            }
+            this.resize();
+        };
+
+        this.removeSelectedEditor = function () {
+            const editor = this.getCurrentEditor();
+            const index = editor.currentIndex;
+            this.$container.removeChild(editor.frameContainer);
+            this.$editors.splice(index, 1)
+            this.$splits--;
+
+            for (let i = index; i < this.$editors.length; i++) {
+                this.$editors[i].currentIndex--;
+            }
+        }
+
+        /**
+         * 
+         * Returns the number of splits.
+         * @returns {Number}
+         **/
+        this.getSplits = function () {
+            return this.$splits;
+        };
+
+        /**
+         * @param {Number} idx The index of the editor you want
+         *
+         * Returns the editor identified by the index `idx`.
+         *
+         **/
+        this.getEditor = function (idx) {
+            return this.$editors[idx];
+        };
+
+        /**
+         * 
+         * Returns the current editor.
+         * @returns {Editor}
+         **/
+        this.getCurrentEditor = function () {
+            return this.$cEditor;
+        };
+
+        /** 
+         * Focuses the current editor.
+         * @related Editor.focus
+         **/
+        this.focus = function () {
+            this.$cEditor.focus();
+        };
+
+        /** 
+         * Blurs the current editor.
+         * @related Editor.blur
+         **/
+        this.blur = function () {
+            this.$cEditor.blur();
+        };
+
+        /** 
+         * 
+         * @param {String} theme The name of the theme to set
+         * 
+         * Sets a theme for each of the available editors.
+         * @related Editor.setTheme
+         **/
+        this.setTheme = function (theme) {
+            this.$editors.forEach(function (editor) {
+                editor.setTheme(theme);
+            });
+        };
+
+        /** 
+         * 
+         * @param {String} keybinding 
+         * 
+         * Sets the keyboard handler for the editor.
+         * @related editor.setKeyboardHandler
+         **/
+        this.setKeyboardHandler = function (keybinding) {
+            this.$editors.forEach(function (editor) {
+                editor.setKeyboardHandler(keybinding);
+            });
+        };
+
+        /** 
+         * 
+         * @param {Function} callback A callback function to execute
+         * @param {String} scope The default scope for the callback
+         * 
+         * Executes `callback` on all of the available editors. 
+         *
+         **/
+        this.forEach = function (callback, scope) {
+            this.$editors.forEach(callback, scope);
+        };
+
+
+        this.$fontSize = "";
+        /** 
+         * @param {Number} size The new font size
+         * 
+         * Sets the font size, in pixels, for all the available editors.
+         *
+         **/
+        this.setFontSize = function (size) {
+            this.$fontSize = size;
+            this.forEach(function (editor) {
+                editor.setFontSize(size);
+            });
+        };
+
+        this.$cloneSession = function (session) {
+            var s = new EditSession(session.getDocument(), session.getMode());
+
+            var undoManager = session.getUndoManager();
+            s.setUndoManager(undoManager);
+
+            // Copy over 'settings' from the session.
+            s.setTabSize(session.getTabSize());
+            s.setUseSoftTabs(session.getUseSoftTabs());
+            s.setOverwrite(session.getOverwrite());
+            s.setBreakpoints(session.getBreakpoints());
+            s.setUseWrapMode(session.getUseWrapMode());
+            s.setUseWorker(session.getUseWorker());
+            s.setWrapLimitRange(session.$wrapLimitRange.min,
+                session.$wrapLimitRange.max);
+            s.$foldData = session.$cloneFoldData();
+
+            return s;
+        };
+
+        /** 
+         * 
+         * @param {EditSession} session The new edit session
+         * @param {Number} idx The editor's index you're interested in
+         * 
+         * Sets a new [[EditSession `EditSession`]] for the indicated editor.
+         * @related Editor.setSession
+         **/
+        this.setSession = function (session, idx) {
+            var editor;
+            if (idx == null) {
+                editor = this.$cEditor;
+            } else {
+                editor = this.$editors[idx];
+            }
+
+            // Check if the session is used already by any of the editors in the
+            // split. If it is, we have to clone the session as two editors using
+            // the same session can cause terrible side effects (e.g. UndoQueue goes
+            // wrong). This also gives the user of Split the possibility to treat
+            // each session on each split editor different.
+            var isUsed = this.$editors.some(function (editor) {
+                return editor.session === session;
+            });
+
+            if (isUsed) {
+                session = this.$cloneSession(session);
+            }
+            editor.setSession(session);
+
+            // Return the session set on the editor. This might be a cloned one.
+            return session;
+        };
+
+        /** 
+         * 
+         * Returns the orientation.
+         * @returns {Number}
+         **/
+        this.getOrientation = function () {
+            return this.$orientation;
+        };
+
+        /** 
+         * 
+         * Sets the orientation.
+         * @param {Number} orientation The new orientation value
+         *
+         *
+         **/
+        this.setOrientation = function (orientation) {
+            if (this.$orientation == orientation) {
+                return;
+            }
+            this.$orientation = orientation;
+            this.resize();
+        };
+
+        /**  
+         * Resizes the editor.
+         **/
+        this.resize = function () {
+            var width = this.$container.clientWidth;
+            var height = this.$container.clientHeight;
+            var editor;
+
+            if (this.$orientation == this.BESIDE) {
+                // var editorWidth = width / this.$splits;
+                this.$container.style.flexDirection = 'row'
+                for (var i = 0; i < this.$splits; i++) {
+                    //     const header = this.$headers[i];
+                    editor = this.$editors[i];
+                    //     editor.container.style.width = editorWidth + "px";
+                    //     editor.container.style.top = this.$headerHeight + "px";
+                    //     editor.container.style.left = i * editorWidth + "px";
+                    //     editor.container.style.height = height - this.$headerHeight + "px";
+                    editor.resize();
+                    console.log('resize')
+                    //     header.style.top = '0px';
+                    //     header.style.left = i * editorWidth + this.$headerStart + 'px';
+                }
+            } else {
+                // var editorHeight = height / this.$splits;
+                this.$container.style.flexDirection = 'column'
+                for (var i = 0; i < this.$splits; i++) {
+                    //     const header = this.$headers[i];
+                    editor = this.$editors[i];
+                    //     editor.container.style.width = width + "px";
+                    //     editor.container.style.top = i * editorHeight + this.$headerHeight + "px";
+                    //     editor.container.style.left = "0px";
+                    //     editor.container.style.height = editorHeight - this.$headerHeight + "px";
+                    editor.resize();
+                    console.log('resize')
+                    //     header.style.top = i * editorHeight + 'px';
+                    //     header.style.left = this.$headerStart + 'px';
+                }
+            }
+        };
+
+    }).call(Split.prototype);
+
+    exports.Split = Split;
+});
+
+
+
+/** modified ace/ace */
+
+ace.define("ace/ace",["require","exports","module","ace/lib/fixoldbrowsers","ace/lib/dom","ace/lib/event","ace/editor","ace/edit_session","ace/undomanager","ace/virtual_renderer","ace/worker/worker_client","ace/keyboard/hash_handler","ace/placeholder","ace/multi_select","ace/mode/folding/fold_mode","ace/theme/textmate","ace/ext/error_marker","ace/config", "ace/split", "ace/file_drop"], function(acequire, exports, module) {
 "use strict";
 
 acequire("./lib/fixoldbrowsers");
@@ -20250,13 +20691,15 @@ var Editor = acequire("./editor").Editor;
 var EditSession = acequire("./edit_session").EditSession;
 var UndoManager = acequire("./undomanager").UndoManager;
 var Renderer = acequire("./virtual_renderer").VirtualRenderer;
-acequire("./worker/worker_client");
+const workerModule = acequire("./worker/worker_client");
 acequire("./keyboard/hash_handler");
 acequire("./placeholder");
 acequire("./multi_select");
 acequire("./mode/folding/fold_mode");
-acequire("./theme/textmate");
+const theme = acequire("./theme/textmate");
 acequire("./ext/error_marker");
+// const fileDrop = acequire("./file_drop").FileDrop;
+const Split = acequire("./split").Split;
 
 exports.config = acequire("./config");
 exports.acequire = acequire;
@@ -20310,21 +20753,149 @@ exports.createEditSession = function(text, mode) {
     doc.setUndoManager(new UndoManager());
     return doc;
 };
+
+/** custom section */
+exports.initEditorLayout = function (el) {
+    console.log('index.js[20700]');
+    // const fileDrop = require("./file_drop")
+
+    const env = {}
+
+    // const workerModule = require('ace/worker/worker_client')
+    // const theme = require('ace/theme/textmate')
+    workerModule.WorkerClient = workerModule.UIWorkerClient
+
+    const container = document.getElementById(el)
+    console.log('index.js[20767]', container, el);
+    // const Split = require("ace/split").Split
+    let initEditor = 2
+    const split = new Split(container, theme, initEditor)
+    split.setOrientation(0)
+
+    // register file dropping for all editor
+    const file_dd = acequire('./file_drop')
+    for (let i = 0; i < initEditor; i++){
+        // console.log('index.js[20777]', split.getEditor(i));
+        const editor = split.getEditor(i)
+        file_dd.FileDrop(editor)
+        window.yAce.share[`text${i}`].bindAce(editor, {'aceClass': {'require': window.aceRef}})
+    }
+    // fileDrop(split.getEditor(i))
+
+    split.on("focus", editor => {
+        console.log('custom.js[16]', 'focused')
+        env.editor = editor
+        env.currentEditorIndex = editor.currentIndex
+    })
+
+    env.split = split
+    window.env = env
+
+    const consoleHeight = 20
+    const onResize = () => {
+        const left = env.split.$container.offsetLeft
+        container.style.cssText = `width: ${document.documentElement.clientWidth - left}px; 
+             height: ${document.documentElement.clientHeight - consoleHeight}px; 
+             display: flex; flex-direction: column;`
+        env.split.resize()
+    }
+
+    window.onresize = onResize;
+    onResize()
+
+    return split.getCurrentEditor()
+}
+
 exports.EditSession = EditSession;
 exports.UndoManager = UndoManager;
 exports.version = "1.2.9";
 });
-            (function() {
-                ace.acequire(["ace/ace"], function(a) {
-                    if (a) {
-                        a.config.init(true);
-                        a.define = ace.define;
-                    }
-                    if (!window.ace)
-                        window.ace = a;
-                    for (var key in a) if (a.hasOwnProperty(key))
-                        window.ace[key] = a[key];
-                });
-            })();
+
+(function() {
+    ace.acequire(["ace/ace"], function(a) {
+        if (a) {
+            a.config.init(true);
+            a.define = ace.define;
+        }
+        if (!window.ace)
+            window.ace = a;
+        for (var key in a) if (a.hasOwnProperty(key))
+            window.ace[key] = a[key];
+    });
+})();
         
 module.exports = window.ace.acequire("ace/ace");
+
+// import './custom.js'
+
+
+/** custom.js */
+
+
+// ace.define("ace/custom", ["require", "exports", "module"], function (require, exports, module) {
+//     "use strict";
+
+//     exports.initEditorLayout = function(){
+//         console.log('index.js[20700]');
+//         const fileDrop = require("ace/file_drop")
+    
+//         const env = {}
+    
+//         const workerModule = require('ace/worker/worker_client')
+//         const theme = require('ace/theme/textmate')
+//         workerModule.WorkerClient = workerModule.UIWorkerClient
+    
+//         const container = document.getElementById("editor-container")
+//         const Split = require("ace/split").Split
+//         let initEditor = 2
+//         const split = new Split(container, theme, initEditor)
+//         split.setOrientation(0)
+    
+//         // register file dropping for all editor
+//         for (let i = 0; i < initEditor; i++)
+//             fileDrop(split.getEditor(i))
+    
+//         split.on("focus", editor => {
+//             console.log('custom.js[16]', 'focused')
+//             env.editor = editor
+//         })
+    
+//         env.split = split
+//         window.env = env
+    
+//         const consoleHeight = 20
+//         const onResize = () => {
+//             const left = env.split.$container.offsetLeft
+//             container.style.cssText = `width: ${document.documentElement.clientWidth - left}px; 
+//              height: ${document.documentElement.clientHeight - consoleHeight}px; 
+//              display: flex; flex-direction: column;`
+//             env.split.resize()
+//         }
+    
+//         window.onresize = onResize;
+//         onResize()
+
+//         return split.getCurrentEditor()
+//     }
+
+// })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
