@@ -1,4 +1,4 @@
-import modelist from './brace/ext/modelist_module.js'
+const modelist = require('./brace/ext/modelist_module.js')
 /**
  * TreeJS is a JavaScript librarie for displaying TreeViews
  * on the web.
@@ -6,7 +6,7 @@ import modelist from './brace/ext/modelist_module.js'
  * @author Matthias Thalmann
  */
 
-export function TreeView(root, container, options) {
+function TreeView(root, container, options) {
   var self = this;
 
   /*
@@ -174,10 +174,12 @@ export function TreeView(root, container, options) {
           cache: 'default'
         }
 
-        const rootPath = '/home/lkit/tmp/'
+        const rootPath = window.currentDirectory
         const relPath = new TreePath(node_cur.getRoot(), node_cur).toCompleteString()
 
-        fetch(new Request(`http://localhost:3001/file?file=${rootPath + relPath}`, myInit))
+        console.log('tree.js[180] final path', rootPath + '/' + relPath)
+
+        fetch(new Request(`http://localhost:3002/file?file=${rootPath +'/'+ relPath}`, myInit))
           .then(res => res.text())
           .then(text => {
 
@@ -302,7 +304,7 @@ export function TreeView(root, container, options) {
     this.reload();
 }
 
-export function TreeNode(userObject, options) {
+function TreeNode(userObject, options) {
   var children = new Array();
   var self = this;
   var events = new Array();
@@ -616,7 +618,7 @@ function TreePath(root, node) {
 /*
  * Util-Methods
  */
-export const TreeUtil = {
+const TreeUtil = {
   default_leaf_icon: "<span>&#128441;</span>",
   default_parent_icon: "<span>&#128449;</span>",
   default_open_icon: "<span>&#9698;</span>",
@@ -698,3 +700,9 @@ var TreeConfig = {
   close_icon: TreeUtil.default_close_icon,
   context_menu: undefined
 };
+
+module.exports = {
+  TreeUtil, TreeNode, TreeView
+}
+
+

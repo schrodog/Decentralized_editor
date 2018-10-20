@@ -218,7 +218,7 @@ for (var name in supportedModes) {
   modes.push(mode);
 }
 
-export default {
+module.exports = {
   'getModeForPath': getModeForPath,
   'modes': modes,
   'modesByName': modesByName

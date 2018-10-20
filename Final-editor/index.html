@@ -3,21 +3,39 @@
 
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, 
-    maximum-scale=1.0">
-    
-  <link rel="stylesheet" src="./css/screen.css"></link>
-  <link rel="stylesheet" src="./css/styles.css"></link>
-  <link rel="stylesheet" src="./css/treejs.css"></link>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1.0">
+
+  <link rel="stylesheet" href="./css/screen.css"></link>
+  <link rel="stylesheet" href="./css/styles.css"></link>
+  <link rel="stylesheet" href="./css/treejs.css"></link>
 </head>
 
 <body>
+  <div id="body-container">
 
-  <!-- Loading editor ... -->
-
-  <div id="aceContainer"></div>
+    <div id="optionsArea">
+      <div id="optionsSubarea">
+  
+        <div id="optionsPanel">
+          <button id="add">add editor</button>
+          <button id="remove">remove editor</button>
+          <button id="toggle_orientation">toggle orientation</button>
+          <button id="load_workspace">Load Workspace</button>
+        </div>
+  
+        <div id="file_tree_container"></div>
+  
+      </div>
+    </div>
+  
+  
+    <!-- Loading editor ... -->
+  
+    <div id="aceContainer"></div>
+  </div>
   
   <script src="./dist/main.js"></script>
+  <script src="./renderer.js"></script>
 </body>
 
 </html>

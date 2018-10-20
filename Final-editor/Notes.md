@@ -57,14 +57,18 @@ because treat two computer having same ip, so same user
 ## run miltiple editor sync
 declare multiple sharing class in 
 
+## electron cannot find module
+under different directory, need to navigate back to target location
 
 
 
 
 
-
-
-
+# TODO
+1. stop switch page sync 
+2. create home page to connect/host
+3. auto copy all files from peer, and then prepare to go
+4. add file, delete file function
 
 
 

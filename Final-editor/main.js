@@ -12,6 +12,11 @@ function createWindow () {
   console.log('args', process.argv[2]) 
 
   mainWindow.loadURL(`http://localhost:${process.argv[2] || 3001}`)
+  mainWindow.webContents.executeJavaScript(`
+    let path = require('path');
+    module.paths.push(path.resolve(__dirname, '..','..','..','..','..','..'));
+    path = undefined;
+  `)
   // mainWindow.loadFile('index.html')
 
   mainWindow.webContents.openDevTools()

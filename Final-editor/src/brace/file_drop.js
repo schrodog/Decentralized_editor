@@ -1,3 +1,5 @@
+const modelist = require('./ext/modelist_module.js')
+
 /* ***** BEGIN LICENSE BLOCK *****
  * Distributed under the BSD license:
  *
@@ -28,52 +30,58 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-ace.define("ace/file_drop", ["require", "exports", "module"], function (require, exports, module) {
+// let config, event, modelist;
 
-  var config = require("ace/config");
-  var event = require("ace/lib/event");
-  var modelist = require("ace/ext/modelist");
+// ace.define("ace/file_drop", ["require", "exports", "module"], function (require, exports, module) {
 
-  module.exports = function (editor) {
-    console.log('file_drop[38]', 'add listener');
-    event.addListener(editor.container, "dragover", function (e) {
-      var types = e.dataTransfer.types;
-      console.log('file_drop.js[40]')
-      if (types && Array.prototype.indexOf.call(types, 'Files') !== -1)
-        return event.preventDefault(e);
-    });
+//   config = require("ace/config");
+//   event = require("ace/lib/event");
+//   modelist = require("ace/ext/modelist");
 
-    event.addListener(editor.container, "drop", function (e) {
-      var file;
-      try {
-        file = e.dataTransfer.files[0];
-        if (window.FileReader) {
-          var reader = new FileReader();
-          reader.onload = function () {
-            var mode = modelist.getModeForPath(file.name);
-            console.log('file_drop.js[52]', file.name, reader.result, mode)
+  
+//   var Editor = require("ace/editor").Editor;
+//   config.defineOptions(Editor.prototype, "editor", {
+//     loadDroppedFile: {
+//       set: function () {
+//         module.exports(this);
+//       },
+//       value: true
+//     }
+//   });
 
-            editor.session.doc.setValue(reader.result);
-            editor.session.setMode(mode.mode);
-            editor.session.modeName = mode.name;
-          };
-          reader.readAsText(file);
-        }
-        return event.preventDefault(e);
-      } catch (err) {
-        return event.stopEvent(e);
-      }
-    });
-  };
+// });
 
-  var Editor = require("ace/editor").Editor;
-  config.defineOptions(Editor.prototype, "editor", {
-    loadDroppedFile: {
-      set: function () {
-        module.exports(this);
-      },
-      value: true
-    }
+
+module.exports = function (editor) {
+  console.log('file_drop[38]', 'add listener');
+  editor.container.addEventListener("dragover", function (e) {
+    var types = e.dataTransfer.types;
+    console.log('file_drop.js[40]')
+    if (types && Array.prototype.indexOf.call(types, 'Files') !== -1)
+      return event.preventDefault(e);
   });
 
-});
+  editor.container.addEventListener("drop", function (e) {
+    var file;
+    try {
+      file = e.dataTransfer.files[0];
+      if (window.FileReader) {
+        var reader = new FileReader();
+        reader.onload = function () {
+          var mode = modelist.getModeForPath(file.name);
+          console.log('file_drop.js[52]', file.name, reader.result, mode)
+
+          editor.session.doc.setValue(reader.result);
+          editor.session.setMode(mode.mode);
+          editor.session.modeName = mode.name;
+        };
+        reader.readAsText(file);
+      }
+      return e.preventDefault();
+    } catch (err) {
+      return e.stopEvent();
+    }
+  });
+};
+
+

@@ -13,7 +13,7 @@ ace.define(function(require, exports, module) {
   
   const container = document.getElementById("editor-container")
   const Split = require("ace/split").Split
-  let initEditor = 2
+  window.initEditor = 2
   const split = new Split(container, theme, initEditor)
   split.setOrientation(0)
 
@@ -42,6 +42,7 @@ ace.define(function(require, exports, module) {
   window.onresize = onResize;
   onResize()
   
+
 })
 
 

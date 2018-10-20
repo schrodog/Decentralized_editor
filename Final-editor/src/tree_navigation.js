@@ -1,4 +1,8 @@
-import { TreeUtil, TreeNode, TreeView} from './tree.js'
+// import {TreeNode, TreeView} from './tree.js'
+const fetch = require('node-fetch')
+const {TreeNode} = require('./tree.js')
+global.Headers = fetch.Headers
+global.Request = fetch.Request
 
 const myInit = {
   method: 'GET',
@@ -13,9 +17,9 @@ const path = '/home/lkit/tmp/purecss-francine'
 
 // console.log(`http://localhost:3001/file?path=${encodeURI(path)}`)
 
-export const loadWorkspace = (path) => {
+exports.loadWorkspace = (path) => {
 
-  fetch(new Request(`http://localhost:3001/filelist?path=${encodeURI(path)}`, myInit))
+  fetch(new Request(`http://localhost:3002/filelist?path=${encodeURI(path)}`, myInit))
     .then(res => res.json())
     .then(tree => {
   
@@ -35,7 +39,10 @@ export const loadWorkspace = (path) => {
   
       iterate_tree(tree, root)
   
-      const view = new TreeView(root, '#file_tree_container')
+      // const view = new TreeView(root, '#file_tree_container')
+      // view.collapseAllNodes();
+      // root.setExpanded(true);
+      // view.reload();
   
       // function changeIcons(fa_icons) {
       //   if (fa_icons) {
@@ -90,14 +97,12 @@ export const loadWorkspace = (path) => {
       // }
   
       // only show first layer
-      view.collapseAllNodes();
-      root.setExpanded(true);
-      view.reload();
+      
   
     }).catch(err => console.log('[tree_navigation] error', err))
 }
 
-loadWorkspace(path)
+// loadWorkspace(path)
 
 
 

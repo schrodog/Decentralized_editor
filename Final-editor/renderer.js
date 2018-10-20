@@ -1,34 +1,106 @@
 // renderer process
 const {ipcRenderer} = require('electron')
 const fs = require('fs')
+const path = require('path')
 
-const textarea = document.getElementById("text")
+// module.paths.push(path.resolve(__dirname, '..', '..', '..', '..', '..', '..'));
+console.log('module.paths', __dirname)
+const fileDrop = require('../../../../../../src/brace/file_drop.js')
+const {TreeNode, TreeView} = require('../../../../../../src/tree.js')
+// import {TreeView} from './src/tree.js'
 
-console.log(ipcRenderer.sendSync('synchronous-message', 'ping'));
+console.log('TreeView', fileDrop)
 
-ipcRenderer.on('asynchronous-reply', (event, arg) => {
-  console.log('async-reply',arg);
-})
-ipcRenderer.send('asynchronous-message', 'ping')
+// console.log(ipcRenderer.sendSync('synchronous-message', 'ping'));
 
-ipcRenderer.on('copy-to-textarea', (event, arg) => {
+// ipcRenderer.on('asynchronous-reply', (event, arg) => {
+//   console.log('async-reply',arg);
+// })
+// ipcRenderer.send('asynchronous-message', 'ping')
+
+const myInit = {
+  method: 'GET',
+  headers: new Headers({
+    'Content-Type': 'application/json;charset=UTF-8'
+  }),
+  mode: 'cors',
+  cache: 'default'
+}
+
+
+ipcRenderer.on('copy-to-editor', (event, arg) => {
   // console.log('arg',arg)
   // console.log(window)
   // console.log(document)
-  window.currentFile = arg.filename;
-  console.log('renderer.js[17]',window.currentFile)
-  textarea.value = arg.data;
+  window.currentDirectory = path.resolve(arg.dirname, '..');
+  console.log('renderer.js[17]',window.currentDirectory)
+
+  fetch(new Request(`http://localhost:3002/filelist?path=${encodeURI(arg.dirname)}`, myInit))
+    .then(res => res.json())
+    .then(tree => {
+
+      const root = new TreeNode(tree.name)
+
+      const iterate_tree = (parent, parentNode) => {
+        const child = parent.children
+        if (child) {
+          for (let i in child) {
+            const node = new TreeNode(child[i].name)
+            parentNode.addChild(node)
+            if (child[i].children)
+              iterate_tree(child[i], node)
+          }
+        }
+      }
+
+      iterate_tree(tree, root)
+
+      const view = new TreeView(root, '#file_tree_container')
+      view.collapseAllNodes();
+      root.setExpanded(true);
+      view.reload();
+
+    }).catch(err => console.log('[tree_navigation] error', err))
+
+  // textarea.value = arg.data;
 })
 
-textarea.addEventListener("change", (event) => {
-  console.log('changed');
-  fs.writeFile(window.currentFile, textarea.value, err => {
-    if(err) throw err;
-    console.log(textarea.value)
-    console.log('file is saved')
-  })
-
+document.getElementById("add").addEventListener("click", () => {
+  // const editor = split.$createEditor()
+  window.env.split.setSplits(++window.initEditor)
+  fileDrop(window.env.split.getEditor(window.initEditor - 1))
+  // initEditor++;
 })
+
+document.getElementById("remove").addEventListener("click", () => {
+  // split.setSplits(--initEditor)
+  window.env.split.removeSelectedEditor()
+  window.initEditor--;
+})
+
+document.getElementById("toggle_orientation").addEventListener("click", () => {
+  if (env.split.$orientation === 1) {
+    window.env.split.$orientation = 0;
+  } else {
+    window.env.split.$orientation = 1;
+  }
+  window.env.split.resize()
+})
+
+// document.getElementById("load_workspace").addEventListener("click", () => {
+//   loadWorkspace(path)
+// })
+
+
+// textarea.addEventListener("change", (event) => {
+//   console.log('changed');
+//   fs.writeFile(window.currentFile, textarea.value, err => {
+//     if(err) throw err;
+//     console.log(textarea.value)
+//     console.log('file is saved')
+//   })
+
+// })
 
 
 
