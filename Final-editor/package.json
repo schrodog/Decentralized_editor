@@ -30,6 +30,7 @@
     "minimist": "^1.2.0",
     "node-fetch": "^2.2.0",
     "path": "^0.12.7",
+    "smalltalk": "^3.2.1",
     "socket.io": "^2.1.1",
     "style-loader": "^0.23.1",
     "webpack": "^4.21.0",

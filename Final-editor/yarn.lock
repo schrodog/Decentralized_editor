@@ -583,6 +583,14 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@cloudcmd/create-element@^1.0.0":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@cloudcmd/create-element/-/create-element-1.1.1.tgz#d99197addb11731c128c5042b8e1b35643288272"
+  integrity sha512-RntwJVi2Pw2nnEBKsGtheEvpb7eBN3fW4SuqTYhLP/uFDIhWLcpvpNeYAbKHZCjUXSQwUd3t8b0VwGqPib5oZQ==
+  dependencies:
+    currify "^3.0.0"
+    fullstore "^1.0.0"
+
 "@types/node@^8.0.24":
   version "8.10.36"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.10.36.tgz#eac05d576fbcd0b4ea3c912dc58c20475c08d9e4"
@@ -1845,6 +1853,11 @@ currently-unhandled@^0.4.1:
   dependencies:
     array-find-index "^1.0.1"
 
+currify@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/currify/-/currify-3.0.0.tgz#ec5b18fe65c2b3b08daba7f2a75a01063b2c89c2"
+  integrity sha512-ecz0Dq3T2UwiLwhiYvEFhdM4yUvlCLRgVbvpt6oI8RteJzEztum1UbLbN6snQ5nfHqtMcnrxkd7N0LeAIErorw==
+
 cyclist@~0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/cyclist/-/cyclist-0.2.2.tgz#1b33792e11e914a2fd6d6ed6447464444e5fa640"
@@ -2643,6 +2656,11 @@ fsevents@^1.2.2:
   dependencies:
     nan "^2.9.2"
     node-pre-gyp "^0.10.0"
+
+fullstore@^1.0.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/fullstore/-/fullstore-1.1.0.tgz#a7a8b00ca07d86faca05fb825c45e5d1c3bba97e"
+  integrity sha512-XNlCWr3KBIL97G8mTR+dZ/J648ECCffflfFRgZW3Zm7pO0PYnH/ZCbwZjV1Dw4LrrDdhV6gnayiIcmdIY4JTsw==
 
 function-bind@^1.1.1:
   version "1.1.1"
@@ -5074,6 +5092,15 @@ slash@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/slash/-/slash-1.0.0.tgz#c41f2f6c39fc16d1cd17ad4b5d896114ae470d55"
   integrity sha1-xB8vbDn8FtHNF61LXYlhFK5HDVU=
+
+smalltalk@^3.2.1:
+  version "3.2.1"
+  resolved "https://registry.yarnpkg.com/smalltalk/-/smalltalk-3.2.1.tgz#279ccee88a301b2f9318a31a1411584af18c0412"
+  integrity sha512-ygo9gQrpm8no4NvhiGNc46xmZom+8x0fFAxp3rHwDZvuuWeX2GPs8F+fNljUDFf030LS0mivmyymUauSOva2fw==
+  dependencies:
+    "@cloudcmd/create-element" "^1.0.0"
+    currify "^3.0.0"
+    fullstore "^1.0.0"
 
 snapdragon-node@^2.0.1:
   version "2.1.1"

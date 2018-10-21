@@ -1,5 +1,6 @@
 const {ipcRenderer} = require('electron')
 const {spawn} = require('child_process')
+const smalltalk = require('smalltalk/native')
 
 global.str = []
 
@@ -49,13 +50,15 @@ document.getElementById("init").onclick = () => {
 }
 
 document.getElementById("peer").onclick = () => {
-  const ip = window.prompt("Enter IP address of peer to connect", "")
-
-  if (ip === null || ip === "") {
-  } else {
-    window.serverIP = ip
-    loadEditor()
-  }
+  smalltalk
+    .prompt("", "Enter IP address of peer to connect", "")
+    .then(val => {
+      if (!val || !val.toString().match(/\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}$/g)) {
+        reject(new Error("Incorrect ip format."));
+      }
+      window.serverIP = ip
+      loadEditor()
+    }).catch(() => console.log('cancelled'))
 
 }
 
