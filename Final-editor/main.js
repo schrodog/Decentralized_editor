@@ -1,31 +1,28 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {ipcMain, app, BrowserWindow} = require('electron')
 const process = require('process')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
-function createWindow () {
-  mainWindow = new BrowserWindow({width: 800, height: 600})
+function loadEditor() {
 
-  console.log('args', process.argv[2]) 
+  console.log('main.js[11] port number', global.portNumber)
 
-  mainWindow.loadURL(`http://localhost:${process.argv[2] || 3001}`)
-  mainWindow.webContents.executeJavaScript(`
-    let path = require('path');
-    module.paths.push(path.resolve(__dirname, '..','..','..','..','..','..'));
-    path = undefined;
-  `)
-  // mainWindow.loadFile('index.html')
+  mainWindow.loadURL(`http://localhost:${global.portNumber || 3001}`)
+  // mainWindow.webContents.executeJavaScript(`
+  //   let path = require('path');
+  //   module.paths.push(path.resolve(__dirname, '..','..','..','..','..','..'));
+  //   path = undefined;
+  // `)
 
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
 
-  // Emitted when the window is closed.
-  mainWindow.on('closed', function () {
-    mainWindow = null
-  })
-
+  // // Emitted when the window is closed.
+  // mainWindow.on('closed', function () {
+  //   mainWindow = null
+  // })
   
   // main
   // const {ipcMain} = require('electron')
@@ -41,6 +38,20 @@ function createWindow () {
 
   require('./menu.js')  
 }
+
+function createWindow(){
+  mainWindow = new BrowserWindow({width: 1600, height: 1000})
+
+  console.log('args', process.argv[2])
+  global.portNumber = process.argv[2]
+
+  mainWindow.loadFile("./cover.html")
+  mainWindow.webContents.openDevTools()
+  mainWindow.on('closed', () => mainWindow = null)
+
+  ipcMain.on('load-editor', () => loadEditor() )
+}
+
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

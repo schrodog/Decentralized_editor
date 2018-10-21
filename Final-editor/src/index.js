@@ -11,7 +11,8 @@ import * as ace from './brace'
 import './brace/mode/javascript'
 import './brace/theme/chrome'
 
-
+// const serverip = location.hostname
+const serverip = window.serverIP || location.hostname
 
 Y({
   db: {
@@ -19,7 +20,7 @@ Y({
   },
   connector: {
     name: 'websockets-client',
-    url: `http://${location.hostname}:1234`,
+    url: `http://${serverip}:1234`,
     room: 'ace-example'
   },
   sourceDir: 'node_modules',
@@ -47,9 +48,6 @@ Y({
   // y.share.text.bindAce(editor, {'aceClass': {'require': ace}})
   // window.yAce.share.text.bindAce(editor, {'aceClass': {'require': ace}})
 
-
 }).catch(err => alert(err))
-
-
 
 

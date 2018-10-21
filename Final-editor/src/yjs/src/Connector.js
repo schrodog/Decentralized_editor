@@ -266,6 +266,7 @@ module.exports = function (Y/* :any */) {
       }
 
       if (sender === this.userId) {
+        console.log('Connector[269]', 'promise resolve()')
         return Promise.resolve()
       }
       this.log('Receive \'%s\' from %s', message.type, sender)
@@ -390,12 +391,22 @@ module.exports = function (Y/* :any */) {
           } else if (message.type === 'update' && canWrite(auth)) {
             console.log('Connector.js[376]', auth, this.syncingClients);
             if (this.forwardToSyncingClients) {
-              for (var client of this.syncingClients) {
-                console.log('Connector.js[379]',client,message);
-                this.send(client, message)
-              }
+              // only send opponent's cursor position
+              if (message.struct === 'Cursor') {
+                for (var client of this.syncingClients) {
+                  if (sender !== client) {
+                    console.log('Connector.js[398]', sender)
+                    this.send(client, message)
+                  }
+                }
+              } else {
+                  for (var client of this.syncingClients) {
+                    console.log('Connector.js[404]',client,message);
+                    this.send(client, message)
+                  }
+                }
             }
-            if (this.y.db.forwardAppliedOperations) {
+            if (this.y.db.forwardAppliedOperations && message.struct !== 'Cursor') {
               const delops = message.ops.filter(o => o.struct === 'Delete')
               if (delops.length > 0) {
                 this.broadcastOps(delops)

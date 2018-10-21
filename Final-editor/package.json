@@ -5,7 +5,7 @@
   "scripts": {
     "start1": "npm-run-all --parallel \"dev 2998\" \"elec 2998\"",
     "start2": "npm-run-all --parallel \"dev 2999\" \"elec 2999\"",
-    "elec": "./node_modules/.bin/electron .",
+    "elec": "./node_modules/.bin/electron . 2998",
     "dev": "DEBUG=true node server.js"
   },
   "license": "MIT",
@@ -16,26 +16,24 @@
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
     "babel-polyfill": "^6.26.0",
     "babel-register": "^6.26.0",
-    "brace": "^0.11.1",
+    "child_process": "^1.0.2",
     "cors": "^2.8.4",
     "css-loader": "^1.0.0",
     "directory-tree": "^2.1.0",
     "electron": "^3.0.5",
     "express": "^4.16.4",
+    "fast-diff": "^1.2.0",
+    "fix-path": "^2.1.0",
     "fs": "^0.0.1-security",
     "leveldown": "^4.0.1",
     "mini-css-extract-plugin": "^0.4.4",
+    "minimist": "^1.2.0",
     "node-fetch": "^2.2.0",
     "path": "^0.12.7",
+    "socket.io": "^2.1.1",
     "style-loader": "^0.23.1",
     "webpack": "^4.21.0",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.9",
-    "y-array": "^10.1.4",
-    "y-map": "^10.1.3",
-    "y-memory": "^8.0.9",
-    "y-text": "^9.5.1",
-    "y-websockets-client": "^8.0.16",
-    "yjs": "^12.3.3"
+    "webpack-dev-server": "^3.1.9"
   }
 }

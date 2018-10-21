@@ -1,3 +1,37 @@
+# Process
+electron open 'cover.html'
+click 'init connection' > 'node server/websocket_server.js' > 'yarn run start1' 
+
+click 'peer connection' > window popup to enter ip > 'yarn run start1'
+  > if already has workspace chosen in host:
+      if already has workspace prebuild (saved in cache):
+        if can detect previous workspace:
+          copy only changes in files
+          (optional: backup previous version)
+        else:
+          ask to specify directory / create new
+      else:
+        open new directory specific for sharing
+        copy all files under directory recursively to peers
+    else:
+      wait for any peer to choose directory (hint words)
+
+- other cases
+if peer suddenly choose another directory:
+  start new workpace in same window
+  > repeat 'peer connection' steps
+if exit certain directory:
+  if homogeneous peer:
+    pass
+  elif heterogeneous peer (local host):
+    switch host control
+
+
+# identification
+use special random key to denote workspace
+store configuration in specific app location
+
+
 #
 assign Text.js to detect changes in text,
 Array.js response to changes in text
@@ -44,7 +78,7 @@ getPixelPosition(position)
 ## broadcast pos
 only need to broadcast your current cursor pos {row, column}
 
-# send to server msg
+## send to server msg
 Connector.js:
   this.send(client, message)
 
