@@ -27,5 +27,27 @@ button.connection {
   margin-right: 40px;
 }
 
+#prompt {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  display: none; 
+  /* -webkit-appearance: none;
+  margin: 0; */
+  /* <-- Apparently some margin are still there even though it's hidden */
+}
+
+input {
+  margin-bottom: 15px;
+}
+
+
+
+
+
 
 
