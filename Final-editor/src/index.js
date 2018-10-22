@@ -10,9 +10,13 @@ Y.extend(yArray, yWebsocketsClient, yMemory, yArray, yMap, yText)
 import * as ace from './brace'
 import './brace/mode/javascript'
 import './brace/theme/chrome'
+import {remote} from 'electron'
 
 // const serverip = location.hostname
+window.serverIP = remote.getGlobal('sharedObj').serverIP
+
 const serverip = window.serverIP || location.hostname
+console.log('index.js[16]', serverip, window.serverIP)
 
 Y({
   db: {

@@ -57,11 +57,12 @@ module.exports = {
   },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'main.js',
+    filename: 'final.js',
     publicPath: '/dist/'
   },
 
 	mode: 'production',
+	target: 'electron-main',
 
 	optimization: {
 		splitChunks: {

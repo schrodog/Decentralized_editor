@@ -2,6 +2,8 @@
 const {ipcMain, app, BrowserWindow} = require('electron')
 const process = require('process')
 
+global.sharedObj = {serverIP: null};
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow

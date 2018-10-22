@@ -1,8 +1,5 @@
-const {ipcRenderer} = require('electron')
+const {ipcRenderer, remote} = require('electron')
 const {spawn} = require('child_process')
-// const smalltalk = require('smalltalk/native')
-
-global.str = []
 
 const loadEditor = () => {
   
@@ -15,8 +12,6 @@ const loadEditor = () => {
   bat.stdout.on('data', data => {
     const str = new TextDecoder("utf-8").decode(data)
     console.log('16-stdout: ', str)
-    // console.log(str+'')
-    global.str.push(str)
 
     if ((str.substr(0,4)) == 'DONE'){
       console.log('bingoo')
@@ -55,12 +50,13 @@ document.getElementById("peer").onclick = () => {
 
   prompt.style.display = "block";
   document.getElementById("ok").onclick = () => {
-    const val = input.value;
+    let val = document.getElementById("ips").value
+
     if (!val || !val.toString().match(/\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}$/g)) {
-      console.error("Incorrect ip format.");
+      console.error("Incorrect ip format.", val);
       return;
     }
-    window.serverIP = ip
+    remote.getGlobal('sharedObj').serverIP = val
     loadEditor()
   }
   

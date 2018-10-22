@@ -8,20 +8,7 @@ const port = parseInt(process.argv[2]) || 3001
 console.log('args', process.argv[2])
 // console.log('port is', port)
 
-new WebpackDevServer(webpack(config), {
-  publicPath: config.output.publicPath,
-  hot: true,
-  historyApiFallback: true,
-  contentBase: __dirname + '/',
-}).listen(port, '0.0.0.0', function (err, result) {
-  if (err) {
-    console.log(err);
-  }
-
-  // console.log('Listening at localhost:3001');
-  console.log('DONE')
-});
-
+/** file */
 const fs = require('fs')
 const dirTree = require('directory-tree')
 
@@ -53,5 +40,18 @@ app.listen(3002, () => console.log('server ready'))
 
 
 
+new WebpackDevServer(webpack(config), {
+  publicPath: config.output.publicPath,
+  hot: true,
+  historyApiFallback: true,
+  contentBase: __dirname + '/',
+}).listen(port, '0.0.0.0', function (err, result) {
+  if (err) {
+    console.log(err);
+  }
+
+  // console.log('Listening at localhost:3001');
+  console.log('DONE')
+});
 
 
