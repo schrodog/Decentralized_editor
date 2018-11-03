@@ -3,6 +3,7 @@
 'use strict'
 
 var Y = require('yjs')
+const send_file = require('./send_file')
 
 Y.debug.log = console.log.bind(console)
 
@@ -68,6 +69,8 @@ io.on('connection', function (socket) {
         rooms.push(room)
       }
     })
+
+    socket.emit('send_file', {'file': send_file.send()})
   })
   socket.on('yjsEvent', function (msg) {
     if (msg.room != null) {

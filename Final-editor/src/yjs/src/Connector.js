@@ -138,6 +138,7 @@ module.exports = function (Y/* :any */) {
       if (this.connections[user] != null) {
         throw new Error('This user already joined!')
       }
+      console.log('User joined: %s', user);
       this.log('User joined: %s', user)
       this.connections[user] = {
         isSynced: false,

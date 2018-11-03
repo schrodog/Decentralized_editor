@@ -6,6 +6,7 @@
     "start1": "npm-run-all --parallel \"dev 2998\" \"elec 2998\"",
     "start2": "npm-run-all --parallel \"dev 2999\" \"elec 2999\"",
     "elec": "./node_modules/.bin/electron . 2998",
+    "elec2": "./node_modules/.bin/electron . 2999",
     "dev": "DEBUG=true node server.js"
   },
   "license": "MIT",
@@ -37,6 +38,7 @@
     "utf-8-validate": "^5.0.1",
     "webpack": "^4.21.0",
     "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.9"
+    "webpack-dev-server": "^3.1.9",
+    "y-webrtc": "^8.0.7"
   }
 }

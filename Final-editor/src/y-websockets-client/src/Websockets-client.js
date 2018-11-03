@@ -8,6 +8,7 @@
 var define = global.define
 global.define = null
 var io = require('socket.io-client')
+const file_sync = require('./file_sync.js')
 // redefine global.define
 global.define = define
 
@@ -34,7 +35,7 @@ function extend (Y) {
 
       this._onConnect = function joinRoom () {
         socket.emit('joinRoom', options.room)
-        self.userJoined('server', 'master')
+        self.userJoined('server', 'master') // (user, role)
       }
 
       socket.on('connect', this._onConnect)
@@ -43,6 +44,10 @@ function extend (Y) {
       } else {
         socket.connect()
       }
+
+      socket.on('send_file', data => {
+        console.log('websocket-client.js[49]', data)
+      })
 
       this._onYjsEvent = function (message) {
         if (message.type != null) {
@@ -53,7 +58,7 @@ function extend (Y) {
             } else {
               userId += socket._yjs_connection_counter++
             }
-            self.setUserId(userId)
+            self.setUserId(userId)  // user id increment from 1
           }
           if (message.room === options.room) {
             self.receiveMessage('server', message)
