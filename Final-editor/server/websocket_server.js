@@ -69,6 +69,7 @@ io.on('connection', function (socket) {
       }
     })
   })
+  
   socket.on('yjsEvent', function (msg) {
     if (msg.room != null) {
       getInstanceOfY(msg.room).then(function (y) {
@@ -90,6 +91,7 @@ io.on('connection', function (socket) {
       })
     }
   })
+
   socket.on('leaveRoom', function (room) {
     getInstanceOfY(room).then(function (y) {
       var i = rooms.indexOf(room)

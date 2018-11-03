@@ -4,14 +4,13 @@ const process = require('process')
 
 global.sharedObj = {serverIP: null};
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
 
 function loadEditor() {
 
   console.log('main.js[11] port number', global.portNumber)
 
+  // connect to self hosted editor
   mainWindow.loadURL(`http://localhost:${global.portNumber || 3001}`)
   // mainWindow.webContents.executeJavaScript(`
   //   let path = require('path');
