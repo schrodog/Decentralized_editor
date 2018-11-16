@@ -209,12 +209,13 @@ module.exports = function (Y/* :any */) {
       }
     }
     send (uid, message) {
-      this.log('Send \'%s\' to %s', message.type, uid)
-      this.logMessage('Message: %j', message)
+      console.log('Send \'%s\' to %s', message.type, uid)
+      console.log('Message: %j', message)
     }
+
     broadcast (message) {
-      this.log('Broadcast \'%s\'', message.type)
-      this.logMessage('Message: %j', message)
+      console.log('Broadcast \'%s\'', message.type)
+      console.log('Message: %j', message)
     }
     /*
       Buffer operations, and broadcast them when ready.

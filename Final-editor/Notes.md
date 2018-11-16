@@ -1,8 +1,27 @@
 # Process
-electron open 'cover.html'
-click 'init connection' > 'node server/websocket_server.js' > 'yarn run start1' 
+type "yarn run elec"
+  > pass port arg '2998'
+  > entry point defined in "package.json" => "main.js"
+  > run "main.js"
+  > load "cover.html", run "cover.js"
+  > wait for event "load-editor"
 
-click 'peer connection' > window popup to enter ip > 'yarn run start1'
+click 'init connection' "cover.js"
+  > 'yarn run dev 2998' => run "server.js"
+    - start WebpackDevServer
+    - start get file service [3002]
+  > 'node server/websocket_server.js' 
+    - start websocket server
+    - open accept socket.io connection
+
+loading editor, open "index.html"
+  > start webpack compile all files from 'index.js' in "src/" => output file in 'dist/final.js'
+  > run "render.js"
+
+
+
+click 'peer connection' 
+  > window popup to enter ip > 'yarn run start1'
   > if already has workspace chosen in host:
       if already has workspace prebuild (saved in cache):
         if can detect previous workspace:
@@ -15,6 +34,12 @@ click 'peer connection' > window popup to enter ip > 'yarn run start1'
         copy all files under directory recursively to peers
     else:
       wait for any peer to choose directory (hint words)
+
+Add editor
+  - "brace/custom.js" > load "file_drop"
+  <!-- - load "split.js" {manage editor splitting problem} -->
+  - in index.js 
+ 
 
 - other cases
 if peer suddenly choose another directory:
@@ -82,7 +107,25 @@ only need to broadcast your current cursor pos {row, column}
 Connector.js:
   this.send(client, message)
 
-Text.js (aceCallback) > Utils (awaitAndPrematurelyCall) > Text.js (yCallback) > Connector.js (broadcastOps) > Utils.js (awaitOps) > Connector.js (receiveMessage) > server.js
+y-text/src/Text.js (aceCallback) 
+> yjs/src/Utils.js (awaitAndPrematurelyCall) 
+> Text.js (yCallback) 
+> Connector.js (broadcastOps) 
+> Utils.js (awaitOps) 
+> Connector.js (receiveMessage) 
+> server.js
+
+## sync process
+'src/y-websockets-client/src/Websockets-client.js' -> constructor
+  > this._onConnect => user joined (server)
+  > "Connector.js" findNextSyncTarget
+    - send msg 'sync step 1' (yjsEvent for socket.io)
+    - "Websockets-client.js" this._onYjsEvent 
+    - self.receiveMessage('server', msg)
+    - "Connector.js" receiveMessage
+    - trigger answer msg (sync step 2) -> send
+    - send 'sync done'
+
 
 # Problem
 ## no sync
@@ -93,6 +136,10 @@ declare multiple sharing class in
 
 ## electron cannot find module
 under different directory, need to navigate back to target location
+
+## stuck in editor loading
+becoz stuck in "Websockets-client.js" -> sync step 1
+
 
 
 

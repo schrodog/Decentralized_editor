@@ -45,8 +45,8 @@ const template = [
     role: 'help',
     submenu: [
       {
-        label: 'Learn More',
-        click() { require('electron').shell.openExternal('https://electronjs.org') }
+        label: 'View source code',
+        click() { require('electron').shell.openExternal('https://github.com/schrodog/Decentralized_editor') }
       }
     ]
   }

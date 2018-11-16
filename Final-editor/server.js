@@ -36,7 +36,7 @@ app.get("/file", (req, res) => {
   })
 })
 
-app.listen(3002, () => console.log('server ready'))
+app.listen(3002).on('error', (err) => console.log('server.js[39]', err))
 
 
 

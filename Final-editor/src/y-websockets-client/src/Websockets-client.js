@@ -50,6 +50,7 @@ function extend (Y) {
       })
 
       this._onYjsEvent = function (message) {
+        console.log('Websocket-client[53]', message);
         if (message.type != null) {
           if (message.type === 'sync done') {
             var userId = socket.id
@@ -65,6 +66,7 @@ function extend (Y) {
           }
         }
       }
+
       socket.on('yjsEvent', this._onYjsEvent)
 
       this._onDisconnect = function (peer) {

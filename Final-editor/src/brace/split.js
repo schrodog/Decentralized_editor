@@ -147,6 +147,7 @@ define(function (require, exports, module) {
       if (splits == this.$splits) {
         return;
       } else if (splits > this.$splits) {
+        // add extra editor
         while (this.$splits < this.$editors.length && this.$splits < splits) {
           editor = this.$editors[this.$splits];
           // add editor to container
@@ -170,6 +171,13 @@ define(function (require, exports, module) {
       }
       this.resize();
     };
+
+    this.addEditor = function(){
+      this.$createEditor()
+      this.$splits++
+      this.resize()
+    }
+    editor.addEditor = addEditor
 
     this.removeSelectedEditor = function () {
       const editor = this.getCurrentEditor();

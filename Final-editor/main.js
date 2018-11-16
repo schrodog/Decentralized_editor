@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const {ipcMain, app, BrowserWindow} = require('electron')
 const process = require('process')
+const kill = require('kill-port')
 
 global.sharedObj = {serverIP: null};
 
@@ -43,11 +44,14 @@ function loadEditor() {
 function createWindow(){
   mainWindow = new BrowserWindow({width: 1600, height: 1000})
 
-  console.log('args', process.argv[2])
+  console.log('args', process.argv)
   global.portNumber = process.argv[2]
 
   mainWindow.loadFile("./cover.html")
   mainWindow.webContents.openDevTools()
+  mainWindow.webContents.on('did-finish-load', () => {
+    mainWindow.webContents.send('get-portNum', global.portNumber)
+  })
   mainWindow.on('closed', () => mainWindow = null)
 
   ipcMain.on('load-editor', () => loadEditor() )
@@ -61,8 +65,10 @@ app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
+  kill(1234)
+  kill(2998)
+  kill(3002)
+  
   if (process.platform !== 'darwin') {
     app.quit()
   }

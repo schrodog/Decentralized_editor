@@ -20454,6 +20454,12 @@ ace.define("ace/split", ["require", "exports", "module"], function (require, exp
             }
         }
 
+        this.addEditor = function(){
+            this.$createEditor()
+            this.$splits++
+            this.resize()
+        }
+
         /**
          * 
          * Returns the number of splits.

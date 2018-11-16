@@ -41,7 +41,6 @@ ace.define(function(require, exports, module) {
   
   window.onresize = onResize;
   onResize()
-  
 
 })
 

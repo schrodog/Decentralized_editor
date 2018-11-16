@@ -53,7 +53,7 @@ const modelist = require('./ext/modelist_module.js')
 
 
 module.exports = function (editor) {
-  console.log('file_drop[38]', 'add listener');
+  console.log('file_drop[38]', 'add listener', editor);
   editor.container.addEventListener("dragover", function (e) {
     var types = e.dataTransfer.types;
     console.log('file_drop.js[40]')

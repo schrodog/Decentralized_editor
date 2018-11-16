@@ -301,7 +301,7 @@ function extend (Y) {
             }
           })
         }
-
+        console.log('Text.js[304]', 'bindAce');
         // window.setInterval(() => self.cursor(aceInstance.getCursorPosition()), 1000)
 
         aceInstance.on('change', aceCallback)

@@ -1,9 +1,10 @@
 const {ipcRenderer, remote} = require('electron')
 const {spawn} = require('child_process')
 
-const loadEditor = () => {
-  
-  const bat = spawn('yarn run dev 2998', [], {shell: true})
+ipcRenderer.on('get-portNum', (event,msg) => {
+  console.log('start set timeout event', msg);
+
+  const bat = spawn('yarn run dev '+msg, [], {shell: true})
   bat.stderr.on('data', err => {
     const str = new TextDecoder("utf-8").decode(err)
     console.error('cover.js[8]', str)
@@ -15,10 +16,14 @@ const loadEditor = () => {
 
     if ((str.substr(0,4)) == 'DONE'){
       console.log('bingoo')
-      ipcRenderer.send('load-editor');
     }
   })
+})
+
+
+const loadEditor = () => {
   
+  ipcRenderer.send('load-editor');
   console.log('cover.js[12]')
 }
 

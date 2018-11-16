@@ -67,7 +67,8 @@ ipcRenderer.on('copy-to-editor', (event, arg) => {
 
 document.getElementById("add").addEventListener("click", () => {
   // const editor = split.$createEditor()
-  window.env.split.setSplits(++window.initEditor)
+  window.initEditor++
+  window.env.split.addEditor()
   fileDrop(window.env.split.getEditor(window.initEditor - 1))
   // initEditor++;
 })
