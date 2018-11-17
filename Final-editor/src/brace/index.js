@@ -20784,6 +20784,7 @@ exports.initEditorLayout = function (el) {
         // console.log('index.js[20777]', split.getEditor(i));
         const editor = split.getEditor(i)
         file_dd.FileDrop(editor)
+        // init content from master to peer here
         window.yAce.share[`text${i}`].bindAce(editor, {'aceClass': {'require': window.aceRef}})
     }
     // fileDrop(split.getEditor(i))

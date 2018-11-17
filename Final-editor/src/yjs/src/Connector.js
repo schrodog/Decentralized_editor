@@ -317,6 +317,7 @@ module.exports = function (Y/* :any */) {
       if (this.connections[sender] != null && this.connections[sender].auth != null) {
         return this.connections[sender].auth.then((auth) => {
           if (message.type === 'sync step 1' && canRead(auth)) {
+            console.log('Connector.js[320] sync 1')
             let conn = this
             let m = message
 
@@ -356,6 +357,7 @@ module.exports = function (Y/* :any */) {
               }
             })
           } else if (message.type === 'sync step 2' && canWrite(auth)) {
+            console.log('Connector.js[359] sync 2')
             var db = this.y.db
             var defer = {}
             defer.promise = new Promise(function (resolve) {
@@ -392,6 +394,7 @@ module.exports = function (Y/* :any */) {
               defer.resolve()
             })
           } else if (message.type === 'sync done') {
+            console.log('Connector.js[395] sync done')
             var self = this
             this.syncStep2.then(function () {
               self._setSyncedWith(sender)

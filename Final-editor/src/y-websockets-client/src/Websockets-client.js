@@ -60,6 +60,8 @@ function extend (Y) {
               userId += socket._yjs_connection_counter++
             }
             self.setUserId(userId)  // user id increment from 1
+
+            socket.emit('yjsEvent', file_sync.start())
           }
           if (message.room === options.room) {
             console.log('websocket-client[65]')

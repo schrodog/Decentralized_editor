@@ -329,9 +329,11 @@ function extend (Y) {
           var aceDocument = aceInstance.getSession().getDocument()
           mutualExcluse(function () {
             if (event.type === 'insert') {
+              console.log('Text.js[332] insert');
               let start = aceDocument.indexToPosition(event.index, 0)
               aceDocument.insert(start, event.values.join(''))
             } else if (event.type === 'delete') {
+              console.log('Text.js[336] delete');
               let start = aceDocument.indexToPosition(event.index, 0)
               let end = aceDocument.indexToPosition(event.index + event.length, 0)
               var range = new Range(start.row, start.column, end.row, end.column)
