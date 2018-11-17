@@ -423,8 +423,13 @@ module.exports = function (Y/* :any */) {
                 this.broadcastOps(delops)
               }
             }
+            // apply received changes to text
             this.y.db.apply(message.ops)
+          } else if (message.type === 'req newest'){
+            console.log('Connector.js[428]', message)
           }
+
+
         })
       } else {
         return Promise.reject('Unable to deliver message')

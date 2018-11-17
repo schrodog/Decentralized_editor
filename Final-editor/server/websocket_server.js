@@ -36,6 +36,7 @@ console.log('Running y-websockets-server on port ' + port)
 
 global.yInstances = {}
 
+// running websocket server in port 1234
 function getInstanceOfY (room) {
   if (global.yInstances[room] == null) {
     global.yInstances[room] = Y({
