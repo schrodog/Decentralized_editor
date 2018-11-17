@@ -46,7 +46,7 @@ module.exports = {
 						loader: MiniCssExtractPlugin.loader
 					},
 					{
-						loader: 'css-loader',
+						loader: 'style-loader!css-loader!clean-css-loader',
 						options: {
 							sourceMap: true
 						}

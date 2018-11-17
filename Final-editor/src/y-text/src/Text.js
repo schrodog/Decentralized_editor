@@ -290,9 +290,11 @@ function extend (Y) {
 
             var aceDocument = aceInstance.getSession().getDocument()
             if (delta.action === 'insert') {
+              console.log('Text.js[293]', 'insert');
               start = aceDocument.positionToIndex(delta.start, 0)
               self.insert(start, delta.lines.join('\n'))
             } else if (delta.action === 'remove') {
+              console.log('Text.js[297]', 'remove');
               start = aceDocument.positionToIndex(delta.start, 0)
               length = delta.lines.join('\n').length
               self.delete(start, length)

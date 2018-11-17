@@ -139,7 +139,7 @@ module.exports = function (Y/* :any */) {
         throw new Error('This user already joined!')
       }
       console.log('User joined: %s', user);
-      this.log('User joined: %s', user)
+      this.log('User joined: %s', user, this.currentSyncTarget)
       this.connections[user] = {
         isSynced: false,
         role: role
@@ -168,6 +168,7 @@ module.exports = function (Y/* :any */) {
       if (this.currentSyncTarget != null) {
         return // "The current sync has not finished!"
       }
+      console.log('Connector.js[171]');
 
       var syncUser = null
       for (var uid in this.connections) {
@@ -211,6 +212,11 @@ module.exports = function (Y/* :any */) {
     send (uid, message) {
       console.log('Send \'%s\' to %s', message.type, uid)
       console.log('Message: %j', message)
+      // to bypass the wierd slowness of server -> server communication
+      if (uid === 'server' && (message.type === 'sync step 1' || message.type === 'sync step 2')){
+        console.log('connector.js[216]')
+        this.receiveMessage('server', message)
+      }
     }
 
     broadcast (message) {

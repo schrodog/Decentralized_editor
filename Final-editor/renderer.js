@@ -7,7 +7,6 @@ const path = require('path')
 console.log('module.paths', __dirname)
 const fileDrop = require('../../../../../../src/brace/file_drop.js')
 const {TreeNode, TreeView} = require('../../../../../../src/tree.js')
-// import {TreeView} from './src/tree.js'
 
 console.log('TreeView', fileDrop)
 
@@ -29,9 +28,7 @@ const myInit = {
 
 
 ipcRenderer.on('copy-to-editor', (event, arg) => {
-  // console.log('arg',arg)
-  // console.log(window)
-  // console.log(document)
+
   window.currentDirectory = path.resolve(arg.dirname, '..');
   console.log('renderer.js[17]',window.currentDirectory)
 
@@ -62,7 +59,6 @@ ipcRenderer.on('copy-to-editor', (event, arg) => {
 
     }).catch(err => console.log('[tree_navigation] error', err))
 
-  // textarea.value = arg.data;
 })
 
 document.getElementById("add").addEventListener("click", () => {

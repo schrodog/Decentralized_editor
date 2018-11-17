@@ -59,7 +59,7 @@ function getInstanceOfY (room) {
 io.on('connection', function (socket) {
   var rooms = []
   socket.on('joinRoom', function (room) {
-    log('User "%s" joins room "%s"', socket.id, room)
+    console.log('User "%s" joins room "%s"', socket.id, room)
     socket.join(room)
     getInstanceOfY(room).then(function (y) {
       global.y = y // TODO: remove !!!
@@ -73,8 +73,7 @@ io.on('connection', function (socket) {
   socket.on('yjsEvent', function (msg) {
     if (msg.room != null) {
       getInstanceOfY(msg.room).then(function (y) {
-        // console.log(msg);
-        // console.log('server.js[76]',y.connector.receiveMessage);
+        console.log('server.js[77]',msg);
         y.connector.receiveMessage(socket.id, msg)
       })
     }

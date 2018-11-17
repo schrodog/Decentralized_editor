@@ -62,6 +62,7 @@ function extend (Y) {
             self.setUserId(userId)  // user id increment from 1
           }
           if (message.room === options.room) {
+            console.log('websocket-client[65]')
             self.receiveMessage('server', message)
           }
         }
