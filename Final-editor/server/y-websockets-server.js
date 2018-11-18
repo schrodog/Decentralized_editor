@@ -32,11 +32,13 @@ function extend (Y) {
     }
     send (uid, message) {
       message.room = this.options.room
+      console.log('y-websocket-server[35]', message)
       this.io.to(uid).emit('yjsEvent', message)
       super.send(uid, message)
     }
     broadcast (message) {
       message.room = this.options.room
+      console.log('y-websocket-server[40]', message)
       this.io.in(this.options.room).emit('yjsEvent', message)
       super.broadcast(message)
     }

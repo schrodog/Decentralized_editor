@@ -107,6 +107,8 @@ function extend (Y) {
       super.send(uid, message)
     }
     broadcast (message) {
+      console.log('websocket-client.js[110]', message);
+
       message.room = this.options.room
       this.socket.emit('yjsEvent', message)
       super.broadcast(message)

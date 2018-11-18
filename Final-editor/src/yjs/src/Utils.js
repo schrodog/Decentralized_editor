@@ -657,7 +657,9 @@ module.exports = function (Y /* : any*/) {
         super(arg1, arg2)
         this.writeBuffer = createEmptyOpsArray(5)
         this.readBuffer = createEmptyOpsArray(10)
+        console.log('Utils.js[661]', arg1, arg2)
       }
+
       * find (id, noSuperCall) {
         var i, r
         for (i = this.readBuffer.length - 1; i >= 0; i--) {

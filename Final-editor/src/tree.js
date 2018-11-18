@@ -1,4 +1,5 @@
 const modelist = require('./brace/ext/modelist_module.js')
+const path = require('path')
 /**
  * TreeJS is a JavaScript librarie for displaying TreeViews
  * on the web.
@@ -177,9 +178,11 @@ function TreeView(root, container, options) {
         const rootPath = window.currentDirectory
         const relPath = new TreePath(node_cur.getRoot(), node_cur).toCompleteString()
 
-        console.log('tree.js[180] final path', rootPath + '/' + relPath)
+        let fullPath = path.join(rootPath, relPath)
+        console.log('tree.js[180] final path', fullPath)
 
-        fetch(new Request(`http://localhost:3002/file?file=${rootPath +'/'+ relPath}`, myInit))
+        // fetching file and paste value to selected editor
+        fetch(new Request(`http://localhost:3002/file?file=${fullPath}`, myInit))
           .then(res => res.text())
           .then(text => {
 
@@ -188,10 +191,10 @@ function TreeView(root, container, options) {
 
             const editor = window.env.split.getCurrentEditor()
             editor.header.textContent = node_cur.toString()
+            editor.filePath = fullPath
             editor.session.doc.setValue(text)
             editor.session.setMode(mode.mode)
             editor.session.modeName = mode.name
-
           })
       }
 

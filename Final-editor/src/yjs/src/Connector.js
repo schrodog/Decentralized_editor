@@ -244,6 +244,7 @@ module.exports = function (Y/* :any */) {
           self.broadcastOpBuffer = []
         }
       }
+
       if (this.broadcastOpBuffer.length === 0) {
         this.broadcastOpBuffer = ops
         if (this.y.db.transactionInProgress) {
@@ -262,23 +263,33 @@ module.exports = function (Y/* :any */) {
       console.log('Connector.js[251]','sender',sender, message);
 
       // update other cursors
-      if (message.struct === 'Cursor'){
-        if(! window.yAce) return;
-        // console.log('Y', window.yAce.share.text)
-        // console.log('Y', window.yAce.share.text.aceInstances)
-        // const ref = window.yAce.share.text.aceInstances[0].editor
-        const ref = window.env.split.$editors[message.editorIndex]
-        const Cursor = ref.renderer.$cursorLayer
-        Cursor.updateOtherCursor(message.pos, Cursor.cursors[1], Cursor.config, ref)
-        return;
+      if (message.ops){
+        if (message.ops[0].struct == 'Delete'){
+          let target = message.ops[0].target
+          if (target[target.length-1] === 'Cursor'){
+  
+            if (global.yAce && target[0] !== this.userId){
+              console.log('bingo[269]', this.userId)
+              // console.log('Y', window.yAce.share.text)
+              // console.log('Y', window.yAce.share.text.aceInstances)
+              // const ref = window.yAce.share.text.aceInstances[0].editor
+              let data = target[target.length-2]
+              const ref = window.env.split.$editors[data.editorIndex]
+              const Cursor = ref.renderer.$cursorLayer
+              Cursor.updateOtherCursor(data.pos, Cursor.cursors[1], Cursor.config, ref)
+              return;
+            } else {
+              console.log('Connector.js[279]', message)
+              target.unshift(sender, 0)
+            }
+          }
+        }
       }
 
       if (sender === this.userId) {
         console.log('Connector[269]', 'promise resolve()')
         return Promise.resolve()
       }
-      this.log('Receive \'%s\' from %s', message.type, sender)
-      this.logMessage('Message: %j', message)
 
       if (message.protocolVersion != null && message.protocolVersion !== this.protocolVersion) {
         console.log(
@@ -292,7 +303,6 @@ module.exports = function (Y/* :any */) {
         })
         return Promise.reject('Incompatible protocol version')
       }
-      console.log('Connector.js[274]');
 
       if (message.auth != null && this.connections[sender] != null) {
         // authenticate using auth in message
@@ -311,7 +321,7 @@ module.exports = function (Y/* :any */) {
         // authenticate without otherwise
         this.connections[sender].auth = this.checkAuth(null, this.y, sender)
       }
-      console.log('Connector.js[293]');
+      console.log('Connector.js[293]', message);
 
 
       if (this.connections[sender] != null && this.connections[sender].auth != null) {
@@ -399,25 +409,26 @@ module.exports = function (Y/* :any */) {
             this.syncStep2.then(function () {
               self._setSyncedWith(sender)
             })
-          } else if (message.type === 'update' && canWrite(auth)) {
+          } else if (message.type === 'update' && canWrite(auth) && !message._str) {
             console.log('Connector.js[376]', auth, this.syncingClients);
             if (this.forwardToSyncingClients) {
               // only send opponent's cursor position
-              if (message.struct === 'Cursor') {
-                for (var client of this.syncingClients) {
-                  if (sender !== client) {
-                    console.log('Connector.js[398]', sender)
-                    this.send(client, message)
-                  }
-                }
-              } else {
-                  for (var client of this.syncingClients) {
-                    console.log('Connector.js[404]',client,message);
-                    this.send(client, message)
-                  }
-                }
+              // if (message.struct === 'Cursor') {
+              //   for (var client of this.syncingClients) {
+              //     if (sender !== client) {
+              //       console.log('Connector.js[398]', sender)
+              //       this.send(client, message)
+              //     }
+              //   }
+              // } else {
+              // }
+
+              for (var client of this.syncingClients) {
+                console.log('Connector.js[404]',client,message);
+                this.send(client, message)
+              }
             }
-            if (this.y.db.forwardAppliedOperations && message.struct !== 'Cursor') {
+            if (this.y.db.forwardAppliedOperations){ //&& message.struct !== 'Cursor') {
               const delops = message.ops.filter(o => o.struct === 'Delete')
               if (delops.length > 0) {
                 this.broadcastOps(delops)
@@ -425,10 +436,17 @@ module.exports = function (Y/* :any */) {
             }
             // apply received changes to text
             this.y.db.apply(message.ops)
-          } else if (message.type === 'req newest'){
-            console.log('Connector.js[428]', message)
-          }
 
+          } 
+          // else if (message._str){
+          //   console.log('Connector.js[428]', message, this.userId)
+          //   for (var client of this.syncingClients) {
+          //     console.log('Connector.js[398]', sender)
+          //     this.send(this.userId, message)
+          //   }
+          //   message.id = [this.userId, 0]
+          //   this.y.db.apply([message])
+          // }
 
         })
       } else {

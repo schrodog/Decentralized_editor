@@ -12,7 +12,12 @@ function loadEditor() {
   console.log('main.js[11] port number', global.portNumber)
 
   // connect to self hosted editor
-  mainWindow.loadURL(`http://localhost:${global.portNumber || 3001}`)
+  let newWin = new BrowserWindow({width: 1600, height: 1000})
+  newWin.webContents.openDevTools()
+
+  newWin.loadURL(`http://localhost:${global.portNumber || 3001}`)
+  newWin.on('close', () => newWin = null)
+
   // mainWindow.webContents.executeJavaScript(`
   //   let path = require('path');
   //   module.paths.push(path.resolve(__dirname, '..','..','..','..','..','..'));
@@ -47,6 +52,7 @@ function createWindow(){
   console.log('args', process.argv)
   global.portNumber = process.argv[2]
 
+  
   mainWindow.loadFile("./cover.html")
   mainWindow.webContents.openDevTools()
   mainWindow.webContents.on('did-finish-load', () => {

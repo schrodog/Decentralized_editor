@@ -2,6 +2,7 @@
 const {ipcRenderer} = require('electron')
 const fs = require('fs')
 const path = require('path')
+const connector = require('../../../../../../src/yjs/src/Connector.js')
 
 // module.paths.push(path.resolve(__dirname, '..', '..', '..', '..', '..', '..'));
 console.log('module.paths', __dirname)
@@ -84,9 +85,10 @@ document.getElementById("toggle_orientation").addEventListener("click", () => {
   window.env.split.resize()
 })
 
-// document.getElementById("load_workspace").addEventListener("click", () => {
-//   loadWorkspace(path)
-// })
+document.getElementById("load_workspace").addEventListener("click", () => {
+  console.log('renderer[89]', connector );
+  connector.broadcast("abcd")
+})
 
 
 // textarea.addEventListener("change", (event) => {

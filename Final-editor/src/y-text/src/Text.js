@@ -2,6 +2,7 @@
 'use strict'
 
 var diff = require('fast-diff')
+const fs = require('fs')
 var monacoIdentifierTemplate = { major: 0, minor: 0 }
 
 function extend (Y) {
@@ -323,8 +324,9 @@ function extend (Y) {
         var aceRequire = aceClass.require
         var Range = aceRequire.define.modules['ace/range'].Range
 
+        // do actual insert/delete on certain editor
         function yCallback (event) {
-          console.log('Text.js[329]','event', event.type);
+          console.log('Text.js[329]','event', event);
 
           var aceDocument = aceInstance.getSession().getDocument()
           mutualExcluse(function () {
@@ -338,8 +340,12 @@ function extend (Y) {
               let end = aceDocument.indexToPosition(event.index + event.length, 0)
               var range = new Range(start.row, start.column, end.row, end.column)
               aceDocument.remove(range)
-            } else {
             }
+            
+            // sync file to local fs
+            // editor = 
+            // setTimeout( , 1500)
+            
           })
         }
 

@@ -74,7 +74,7 @@ io.on('connection', function (socket) {
   socket.on('yjsEvent', function (msg) {
     if (msg.room != null) {
       getInstanceOfY(msg.room).then(function (y) {
-        console.log('server.js[77]',msg);
+        console.log('websocket-server.js[77]',msg);
         y.connector.receiveMessage(socket.id, msg)
       })
     }

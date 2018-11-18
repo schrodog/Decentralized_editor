@@ -297,14 +297,29 @@ function extend (Y) {
         throw new Error('pos fields must be a number!')
       }
 
+      // const op = {
+      //   type: 'update',
+      //   ops: [{
+      //     parent: this._model,
+      //     struct: 'Insert',
+      //     left: null,
+      //     right: null,
+      //     origin: null,
+      //     parent: ['_', 'List_Text_text1_', 'Cursor'],
+      //     struct: 'Insert',
+      //     content: [JSON.stringify({pos: pos, editorIndex: index})]
+      //   }],
+      //   room: 'ace-example'
+      // }
+
       const op = {
-        pos: pos,
-        editorIndex: index,
-        parent: this._model,
-        struct: 'Cursor',
-        room: 'ace-example',
         type: 'update',
-        ops: []
+        ops: [{
+          length: 1,
+          struct: 'Delete',
+          target: [{pos: pos, editorIndex: index}, 'Cursor']
+        }],
+        room: 'ace-example'
       }
 
       const eventHandler = this.eventHandler
