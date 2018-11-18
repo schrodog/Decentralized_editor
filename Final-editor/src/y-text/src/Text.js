@@ -305,6 +305,31 @@ function extend (Y) {
           })
         }
         console.log('Text.js[304]', 'bindAce');
+
+        // const span_desc = document.querySelector(".tj_container");
+        // span_desc[i].addEventListener("click", function(e){
+        //   const node_cur = e.target.className
+        // })
+        function watchPropsOn(el, prop) {
+          return new Proxy(el, {
+            set(target, propKey, value, receiver) {
+              if (prop === propKey){
+                console.log('Text.js[317] value changed')
+              }
+              console.log(`Proxy set .${propKey} to ${value}`);
+              target[propKey] = value;
+            }
+          });
+        }
+
+        const header_refs = document.querySelectorAll(".editor-tab")
+        for(let i=0; i<header_refs.length; i++){
+          console.log('[325]', header_refs[i]);
+          watchPropsOn(header_refs[i], 'textContent')
+        }
+
+
+
         // window.setInterval(() => self.cursor(aceInstance.getCursorPosition()), 1000)
 
         aceInstance.on('change', aceCallback)

@@ -323,11 +323,11 @@ function extend (Y) {
       }
 
       const eventHandler = this.eventHandler
+      this.os.y.connector.broadcast(op)
+      
       // this.os.requestTransaction(function* () {
       //   yield* eventHandler.awaitOps(this, (n) => this.store.y.connector.broadcastOps(n), [op])
       // })
-      this.os.y.connector.broadcast(op)
-
       // this.os.store.y.connector.broadcast(op)
 
       // always remember to do that after this.os.requestTransaction
