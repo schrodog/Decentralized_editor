@@ -78,6 +78,7 @@ document.getElementById("peer").onclick = () => {
     console.log('go');
 
     remote.getGlobal('sharedObj').serverIP = ipAddr
+    loadEditor()
   })()
 
 }
