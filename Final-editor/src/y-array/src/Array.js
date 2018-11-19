@@ -322,17 +322,22 @@ function extend (Y) {
         room: 'ace-example'
       }
 
-      const eventHandler = this.eventHandler
       this.os.y.connector.broadcast(op)
-      
-      // this.os.requestTransaction(function* () {
-      //   yield* eventHandler.awaitOps(this, (n) => this.store.y.connector.broadcastOps(n), [op])
-      // })
-      // this.os.store.y.connector.broadcast(op)
+    }
 
-      // always remember to do that after this.os.requestTransaction
-      // (otherwise values might contain a undefined reference to type)
-      // eventHandler.awaitAndPrematurelyCall([op])
+
+    changeFile(msg){
+      const op = {
+        type: 'update',
+        ops: [{
+          length: 1,
+          struct: 'Delete',
+          target: [msg, 'ChangeFile']
+        }],
+        room: 'ace-example'
+      }
+
+      this.os.y.connector.broadcast(op)
     }
 
     observe (f) {

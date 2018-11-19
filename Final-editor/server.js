@@ -17,14 +17,22 @@ const express = require('express')
 const app = express()
 app.use(cors())
 
+let directoryTree = ''
+
 app.get("/filelist", (req, res) => {
   // console.log('req',req.query.path);
   const path = decodeURI(req.query.path)
   console.log('path:', path);
-  if (path)
-    res.send(JSON.stringify(dirTree(path)))
+  if (path){
+    directoryTree = JSON.stringify(dirTree(path))
+    res.send(directoryTree)
+  }
   else
     console.log('error');
+})
+
+app.get("/dirlist", (req, res) => {
+  res.send(directoryTree)
 })
 
 app.get("/file", (req, res) => {
@@ -50,7 +58,6 @@ new WebpackDevServer(webpack(config), {
     console.log(err);
   }
 
-  // console.log('Listening at localhost:3001');
   console.log('DONE')
 });
 

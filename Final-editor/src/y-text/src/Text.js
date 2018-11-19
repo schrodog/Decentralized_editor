@@ -2,7 +2,9 @@
 'use strict'
 
 var diff = require('fast-diff')
-const fs = require('fs')
+// const fs = require('fs')
+// const FileSaver = require('file-saver')
+const path = require('path')
 var monacoIdentifierTemplate = { major: 0, minor: 0 }
 
 function extend (Y) {
@@ -283,7 +285,7 @@ function extend (Y) {
         aceInstance.setValue(this.toString())
 
         function aceCallback (delta) {
-          // console.log('Text.js[285]','action', delta);
+          console.log('Text.js[285]','action', delta);
 
           mutualExcluse(function () {
             var start
@@ -301,6 +303,14 @@ function extend (Y) {
               self.delete(start, length)
             } else if (delta.type === 'changeCursor') {
               self.cursor(aceInstance.getCursorPosition(), window.env.currentEditorIndex)
+
+            } else if (delta.type === 'changeFile'){
+              console.log('[306] change file')
+              self.changeFile(delta)
+              // let editor = window.env.split.getEditor(delta.index)
+              // let fullPath = path.join(window.currentDirectory, delta.path)
+              // editor.header.textContent = delta.filename
+              // editor.filePath = fullPath
             }
           })
         }
@@ -366,12 +376,19 @@ function extend (Y) {
               var range = new Range(start.row, start.column, end.row, end.column)
               aceDocument.remove(range)
             }
-            
-            // sync file to local fs
-            // editor = 
-            // setTimeout( , 1500)
-            
           })
+          // sync file to local fs
+          const editor = event.object.aceInstances[0].editor
+          if (editor.filePath){
+            setTimeout(() => {
+              const full_text = editor.getValue()
+              const filepath = editor.filePath
+              fs.writeFile(filepath, full_text, 'utf8', (err) => {
+                if (err) throw err;
+                console.log('Text.js[375] file saved', filepath)
+              })
+            }, 1000)
+          }
         }
 
         this.observe(yCallback)

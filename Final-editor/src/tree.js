@@ -195,6 +195,10 @@ function TreeView(root, container, options) {
             editor.session.doc.setValue(text)
             editor.session.setMode(mode.mode)
             editor.session.modeName = mode.name
+
+            editor._emit('change', {
+              type: 'changeFile', path: relPath, index: editor.currentIndex, filename: node_cur.toString()
+            })
           })
       }
 

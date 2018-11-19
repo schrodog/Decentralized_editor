@@ -27,6 +27,31 @@ const myInit = {
   cache: 'default'
 }
 
+const initDirTree = (tree) => {
+
+  const root = new TreeNode(tree.name)
+  window.dirTree = tree
+
+  const iterate_tree = (parent, parentNode) => {
+    const child = parent.children
+    if (child) {
+      for (let i in child) {
+        const node = new TreeNode(child[i].name)
+        parentNode.addChild(node)
+        if (child[i].children)
+          iterate_tree(child[i], node)
+      }
+    }
+  }
+  console.log('renderer.js[53]', tree);
+
+  iterate_tree(tree, root)
+
+  const view = new TreeView(root, '#file_tree_container')
+  view.collapseAllNodes();
+  root.setExpanded(true);
+  view.reload();
+}
 
 ipcRenderer.on('copy-to-editor', (event, arg) => {
 
@@ -36,37 +61,19 @@ ipcRenderer.on('copy-to-editor', (event, arg) => {
   fetch(new Request(`http://localhost:3002/filelist?path=${encodeURI(arg.dirname)}`, myInit))
     .then(res => res.json())
     .then(tree => {
-
-      const root = new TreeNode(tree.name)
-
-      const iterate_tree = (parent, parentNode) => {
-        const child = parent.children
-        if (child) {
-          for (let i in child) {
-            const node = new TreeNode(child[i].name)
-            parentNode.addChild(node)
-            if (child[i].children)
-              iterate_tree(child[i], node)
-          }
-        }
-      }
-
-      iterate_tree(tree, root)
-
-      const view = new TreeView(root, '#file_tree_container')
-      view.collapseAllNodes();
-      root.setExpanded(true);
-      view.reload();
-
+      initDirTree(tree)
     }).catch(err => console.log('[tree_navigation] error', err))
-
 })
 
 document.getElementById("add").addEventListener("click", () => {
   // const editor = split.$createEditor()
-  window.initEditor++
+  // window.initEditor++
+  let splits = window.env.split.$splits
   window.env.split.addEditor()
-  fileDrop(window.env.split.getEditor(window.initEditor - 1))
+  let editor = window.env.split.getEditor(splits)
+  fileDrop(editor)
+  window.yAce.share[`text${splits}`].bindAce(editor, {'aceClass': {'require': window.aceRef}})
+
   // initEditor++;
 })
 
@@ -85,9 +92,54 @@ document.getElementById("toggle_orientation").addEventListener("click", () => {
   window.env.split.resize()
 })
 
+let syncRoot = '/home/lkit/tmp'
+
 document.getElementById("load_workspace").addEventListener("click", () => {
-  console.log('renderer[89]', connector );
-  connector.broadcast("abcd")
+
+  
+
+  // console.log('renderer[89]', connector );
+  fetch(new Request(`http://${window.serverIP}:3002/dirlist`, myInit))
+    .then(res => res.json())
+    .then(tree => {
+
+      const iterate_tree = (parent, extra) => {
+        const child = parent.children
+        if (parent.type === 'directory'){
+          console.log('[105] mkdir');
+          fs.mkdir(path.join(syncRoot, extra, parent.name), 0777, (err) => {if(err) throw err})
+        } else if (parent.type === 'file'){
+          console.log('[108] files');
+          fetch(new Request(`http://${window.serverIP}:3002/file?file=${parent.path}`, myInit)).then(res => res.text())
+            .then(text => {
+              fs.writeFile(path.join(syncRoot, extra, parent.name), text, (err) => {
+                if (err) throw err;
+                console.log('written file', parent.name);
+              })
+            })
+        }
+        if (child) {
+          for (let i in child)
+            iterate_tree(child[i], path.join(extra, parent.name) )
+        }
+      }
+
+      console.log('renderer.js[123]',tree);
+
+      fs.exists(path.join(syncRoot, tree.name), (exists) => {
+        if (exists){
+          console.log('file already exists!');
+          return
+        }
+        if (tree)
+          iterate_tree(tree, '')
+      })
+
+      initDirTree(tree)
+      window.currentDirectory = syncRoot
+
+    })
+
 })
 
 

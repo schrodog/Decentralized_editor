@@ -58,6 +58,10 @@ header {
   background-image: linear-gradient(120deg, #155799, #5b9915);
 }
 
+.panel-btn {
+  margin: 10px;
+}
+
 #description {
   margin-top: 1em;
 }

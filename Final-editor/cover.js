@@ -22,8 +22,6 @@ ipcRenderer.on('get-portNum', (event,msg) => {
 })
 
 
-
-
 const loadEditor = () => {
   
   ipcRenderer.send('load-editor');
@@ -58,7 +56,7 @@ document.getElementById("peer").onclick = () => {
 
     const {value: ipAddr} = await swal({
       input: 'text',
-      title: 'Input IP',
+      title: "Input peer's IP",
       inputPlaceholder: "Enter peer's IP address",
       showCancelButton: true
     })

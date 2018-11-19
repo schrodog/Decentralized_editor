@@ -1,3 +1,5 @@
+const path = require('path')
+
 function canRead (auth) { return auth === 'read' || auth === 'write' }
 function canWrite (auth) { return auth === 'write' }
 
@@ -262,21 +264,25 @@ module.exports = function (Y/* :any */) {
     receiveMessage (sender/* :UserId */, message/* :Message */) {
       console.log('Connector.js[251]','sender',sender, message);
 
-      // update other cursors
+      // update other cursors || pass other message
       if (message.ops){
         if (message.ops[0].struct == 'Delete'){
           let target = message.ops[0].target
-          if (target[target.length-1] === 'Cursor'){
-  
+          let type = target[target.length-1]
+          if (type === 'Cursor' || type === 'ChangeFile' ){
             if (global.yAce && target[0] !== this.userId){
-              console.log('bingo[269]', this.userId)
-              // console.log('Y', window.yAce.share.text)
-              // console.log('Y', window.yAce.share.text.aceInstances)
-              // const ref = window.yAce.share.text.aceInstances[0].editor
               let data = target[target.length-2]
-              const ref = window.env.split.$editors[data.editorIndex]
-              const Cursor = ref.renderer.$cursorLayer
-              Cursor.updateOtherCursor(data.pos, Cursor.cursors[1], Cursor.config, ref)
+              if (type === 'Cursor'){
+                console.log('bingo[269]', this.userId)
+                const ref = window.env.split.$editors[data.editorIndex]
+                const Cursor = ref.renderer.$cursorLayer
+                Cursor.updateOtherCursor(data.pos, Cursor.cursors[1], Cursor.config, ref)
+              } else {
+                let editor = window.env.split.getEditor(data.index)
+                let fullPath = path.join(window.currentDirectory, data.path)
+                editor.header.textContent = data.filename
+                editor.filePath = fullPath
+              }
               return;
             } else {
               console.log('Connector.js[279]', message)
