@@ -28,6 +28,7 @@ const loadEditor = () => {
   console.log('cover.js[12]')
 }
 
+global.userlist = []
 // fixPath()
 
 document.getElementById("init").onclick = () => {
@@ -44,6 +45,12 @@ document.getElementById("init").onclick = () => {
   bat.stdout.on('data', data => {
     const str = new TextDecoder("utf-8").decode(data)
     console.log('39-stdout: ', str)
+
+    let match = 'websocket_server.js[69]'
+    if (str.slice(0, match.length) === match){
+      // console.log('match bingo!!!!');
+      global.userlist.push(JSON.parse(str.slice(match.length)))
+    }
   })
 
   console.log('cover.js[22]')

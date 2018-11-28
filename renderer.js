@@ -1,5 +1,6 @@
 // renderer process
 const {ipcRenderer} = require('electron')
+const {dialog} = require('electron').remote
 const fs = require('fs')
 const path = require('path')
 const connector = require('../../../../../../src/yjs/src/Connector.js')
@@ -96,49 +97,64 @@ let syncRoot = '/home/lkit/tmp'
 
 document.getElementById("load_workspace").addEventListener("click", () => {
 
+  dialog.showOpenDialog(options={
+    properties: ['openDirectory'],
+    title: "Select directory to save shared documents"
+  }, (filePath) => {
+    if(! filePath) return;
+
+    syncRoot = filePath[0]
+    console.log('renderer[107]', syncRoot );
+    fetch(new Request(`http://${window.serverIP}:3002/dirlist`, myInit))
+      .then(res => res.json())
+      .then(tree => {
+        document.getElementById("loading-icon").style.display = "initial"
+        document.getElementById("aceContainer").style.filter = "brightness(70%)"
   
 
-  // console.log('renderer[89]', connector );
-  fetch(new Request(`http://${window.serverIP}:3002/dirlist`, myInit))
-    .then(res => res.json())
-    .then(tree => {
-
-      const iterate_tree = (parent, extra) => {
-        const child = parent.children
-        if (parent.type === 'directory'){
-          console.log('[105] mkdir');
-          fs.mkdir(path.join(syncRoot, extra, parent.name), 0777, (err) => {if(err) throw err})
-        } else if (parent.type === 'file'){
-          console.log('[108] files');
-          fetch(new Request(`http://${window.serverIP}:3002/file?file=${parent.path}`, myInit)).then(res => res.text())
-            .then(text => {
-              fs.writeFile(path.join(syncRoot, extra, parent.name), text, (err) => {
-                if (err) throw err;
-                console.log('written file', parent.name);
+        const iterate_tree = (parent, extra) => {
+          const child = parent.children
+          if (parent.type === 'directory'){
+            console.log('[105] mkdir');
+            fs.mkdir(path.join(syncRoot, extra, parent.name), 0777, (err) => {if(err) throw err})
+          } else if (parent.type === 'file'){
+            console.log('[108] files');
+            fetch(new Request(`http://${window.serverIP}:3002/file?file=${parent.path}`, myInit)).then(res => res.text())
+              .then(text => {
+                fs.writeFile(path.join(syncRoot, extra, parent.name), text, (err) => {
+                  if (err) throw err;
+                  console.log('written file', parent.name);
+                })
               })
-            })
+          }
+          if (child) {
+            for (let i in child)
+              iterate_tree(child[i], path.join(extra, parent.name) )
+          }
         }
-        if (child) {
-          for (let i in child)
-            iterate_tree(child[i], path.join(extra, parent.name) )
-        }
-      }
+  
+        console.log('renderer.js[123]',tree);
+  
+        fs.exists(path.join(syncRoot, tree.name), (exists) => {
+          if (exists){
+            console.log('file already exists!');
+            return
+          }
+          if (tree)
+            iterate_tree(tree, '')
+        })
+  
+        initDirTree(tree)
+        window.currentDirectory = syncRoot
 
-      console.log('renderer.js[123]',tree);
+        document.getElementById("loading-icon").style.display = "none"
+        document.getElementById("aceContainer").style.filter = "brightness(100%)"
 
-      fs.exists(path.join(syncRoot, tree.name), (exists) => {
-        if (exists){
-          console.log('file already exists!');
-          return
-        }
-        if (tree)
-          iterate_tree(tree, '')
+
+  
       })
+  })
 
-      initDirTree(tree)
-      window.currentDirectory = syncRoot
-
-    })
 
 })
 

@@ -32,7 +32,13 @@ Y({
     text0: 'Text',
     text1: 'Text',
     text2: 'Text',
-    text3: 'Text'
+    text3: 'Text',
+    text4: 'Text',
+    text5: 'Text',
+    text6: 'Text',
+    text7: 'Text',
+    text8: 'Text',
+    text9: 'Text',
   }
 }).then( y => {
   

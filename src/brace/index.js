@@ -13304,6 +13304,13 @@ Editor.$uid = 0;
 
     this.onScrollTopChange = function() {
         this.renderer.scrollToY(this.session.getScrollTop());
+
+        // const elem = document.querySelector(".ace_otherCursor")
+        // const position = elem.getAttribute("data-position")
+        // const cursor = this.renderer.$cursorLayer
+        // if (this.session.getScrollTop() / cursor.config )
+        // cursor.updateOtherCursor(JSON.parse(position), elem, cursor.config, this)
+
     };
 
     this.onScrollLeftChange = function() {
@@ -15946,21 +15953,20 @@ var Cursor = function(parentEl) {
         return {left : cursorLeft, top : cursorTop};
     };
 
-    this.updateOtherCursor = (position, elem, config, ref) => {
+    this.updateOtherCursor = function(position, elem, config, ref) {
         
-        const pixelPos = this.getPixelPosition_ref(position, config, ref);
-        // console.log('updateOtherCursor',position, elem, config)
-        console.log('updateOtherCursor', pixelPos);
-        let style = elem.style;
+        // elem.setAttribute("data-position", JSON.stringify(position))
+        
+        // const pixelPos = this.getPixelPosition_ref(position, config, ref);
+        // // console.log('updateOtherCursor',position, elem, config)
+        // console.log('updateOtherCursor', pixelPos, position);
+        // let style = elem.style;
 
-        style.left = pixelPos.left + "px";
-        style.top = pixelPos.top + "px";
-        style.width = (config ? config.characterWidth : '6') + 'px'
-        style.height = (config ? config.lineHeight : '12') + 'px'
+        // style.left = pixelPos.left + "px";
+        // style.top = pixelPos.top + "px";
+        // style.width = (config ? config.characterWidth : '6') + 'px'
+        // style.height = (config ? config.lineHeight : '12') + 'px'
 
-        // console.log(this.getOptions());
-        // style.width = this.config.characterWidth + "px";
-        // style.height = this.config.lineHeight + "px";
     }
 
     this.update = function(config) {
@@ -16724,6 +16730,10 @@ z-index: 9;\
 background-color: rgba(255, 255, 0,0.2);\
 position: absolute;\
 z-index: 8;\
+}\
+.MyCursorClass {\
+position: absolute;\
+border-left: 2px solid red;\
 }\
 .ace_br1 {border-top-left-radius    : 3px;}\
 .ace_br2 {border-top-right-radius   : 3px;}\
@@ -20774,7 +20784,7 @@ exports.initEditorLayout = function (el) {
     const container = document.getElementById(el)
     console.log('index.js[20767]', container, el);
     // const Split = require("ace/split").Split
-    let initEditor = 2
+    let initEditor = 1
     const split = new Split(container, theme, initEditor)
     split.setOrientation(0)
 

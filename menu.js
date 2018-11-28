@@ -18,13 +18,15 @@ const template = [
         dialog.showOpenDialog(options = {
               properties: ['openFile', 'openDirectory']
             }, (filePaths) => {
-          console.log('menu.js[20]',filePaths);
-          // navigation.loadWorkspace(filePaths[0])
-          // fs.readFile(filePaths[0], 'utf8', (err, data) => {
-          //   if (err) throw err;
-          //   console.log('file.js[10]')
-          win.webContents.send('copy-to-editor', {'dirname': filePaths[0]})
-          // })
+              if (! filePaths)
+                return;
+              console.log('menu.js[20]',filePaths);
+              // navigation.loadWorkspace(filePaths[0])
+              // fs.readFile(filePaths[0], 'utf8', (err, data) => {
+              //   if (err) throw err;
+              //   console.log('file.js[10]')
+              win.webContents.send('copy-to-editor', {'dirname': filePaths[0]})
+              // })
         })
       }
     },

@@ -68,3 +68,12 @@ body {
   opacity: 1 !important;
   font-size: 1em !important;
 }
+
+#loading-icon {
+  display: none; 
+  position: absolute;
+  left: 300px;
+  top: 150px;
+  z-index: 99;
+}
+

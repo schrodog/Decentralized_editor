@@ -60,7 +60,13 @@ function getInstanceOfY (room) {
 io.on('connection', function (socket) {
   var rooms = []
   socket.on('joinRoom', function (room) {
-    console.log('User "%s" joins room "%s"', socket.id, room)
+    // console.log('User "%s" joins room "%s"', socket.id, room)
+    let address = socket.handshake.address
+    
+    let userInfo = JSON.stringify({id: socket.id, address: address.address, 
+      port: address.port})
+    console.log('websocket_server.js[69]'+userInfo);
+
     socket.join(room)
     getInstanceOfY(room).then(function (y) {
       global.y = y // TODO: remove !!!
@@ -79,6 +85,7 @@ io.on('connection', function (socket) {
       })
     }
   })
+
   socket.on('disconnect', function () {
     for (var i = 0; i < rooms.length; i++) {
       let room = rooms[i]

@@ -140,8 +140,12 @@ module.exports = function (Y/* :any */) {
       if (this.connections[user] != null) {
         throw new Error('This user already joined!')
       }
-      console.log('User joined: %s', user);
-      this.log('User joined: %s', user, this.currentSyncTarget)
+      console.log('Connector.js[143] User joined: ', user, this.connections)
+      // if (! global.userlist){
+      //   global.userlist = []
+      // }
+      // global.userlist.push(user)
+
       this.connections[user] = {
         isSynced: false,
         role: role
@@ -264,6 +268,47 @@ module.exports = function (Y/* :any */) {
     receiveMessage (sender/* :UserId */, message/* :Message */) {
       console.log('Connector.js[251]','sender',sender, message);
 
+      const initOtherCursor = (editor, position) => {
+        let marker = {}
+        marker.cursor = [position]
+        marker.update = function(html, markerLayer, session, config) {
+          let start = config.firstRow, end = config.lastRow;
+          let cursors = this.cursors
+              for (var i = 0; i < cursors.length; i++) {
+                  var pos = this.cursors[i];
+                  if (pos.row < start) {
+                      continue
+                  } else if (pos.row > end) {
+                      break
+                  } else {
+                      // compute cursor position on screen
+                      // this code is based on ace/layer/marker.js
+                      var screenPos = session.documentToScreenPosition(pos)
+
+                      var height = config.lineHeight;
+                      var width = config.characterWidth;
+                      var top = markerLayer.$getTop(screenPos.row, config);
+                      var left = markerLayer.$padding + screenPos.column * width;
+                      // can add any html here
+                      html.push(
+                          "<div class='MyCursorClass' style=''",
+                          "height:", height, "px;",
+                          "top:", top, "px;",
+                          "left:", left, "px; width:", width, "px'></div>"
+                      );
+                  }
+              }
+        }
+        marker.redraw = function() {
+            this.session._signal("changeFrontMarker");
+        }
+        marker.addCursor = function() {
+            marker.redraw()
+        }
+        marker.session = editor.session;
+        marker.session.addDynamicMarker(marker, true)
+      }
+
       // update other cursors || pass other message
       if (message.ops){
         if (message.ops[0].struct == 'Delete'){
@@ -273,10 +318,14 @@ module.exports = function (Y/* :any */) {
             if (global.yAce && target[0] !== this.userId){
               let data = target[target.length-2]
               if (type === 'Cursor'){
-                console.log('bingo[269]', this.userId)
-                const ref = window.env.split.$editors[data.editorIndex]
-                const Cursor = ref.renderer.$cursorLayer
-                Cursor.updateOtherCursor(data.pos, Cursor.cursors[1], Cursor.config, ref)
+                setTimeout(() => {
+                  // console.log('bingo[269]', this.userId)
+                  const ref = window.env.split.$editors[data.editorIndex]
+                  initOtherCursor(ref, data.pos)
+
+                  // const Cursor = ref.renderer.$cursorLayer
+                  // Cursor.updateOtherCursor(data.pos, Cursor.cursors[1], Cursor.config, ref)
+                }, 15)
               } else {
                 let editor = window.env.split.getEditor(data.index)
                 let fullPath = path.join(window.currentDirectory, data.path)
