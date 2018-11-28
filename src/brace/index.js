@@ -10011,6 +10011,7 @@ EditSession.$uid = 0;
         var id = this.$markerId++;
         marker.id = id;
         marker.inFront = !!inFront;
+        console.log('[10014] marker', marker)
 
         if (inFront) {
             this.$frontMarkers[id] = marker;
@@ -10032,6 +10033,7 @@ EditSession.$uid = 0;
             delete (markers[markerId]);
             this._signal(marker.inFront ? "changeFrontMarker" : "changeBackMarker");
         }
+
     };
     this.getMarkers = function(inFront) {
         return inFront ? this.$frontMarkers : this.$backMarkers;
@@ -16734,6 +16736,8 @@ z-index: 8;\
 .MyCursorClass {\
 position: absolute;\
 border-left: 2px solid red;\
+height: 16px;\
+width: 7.20125px;\
 }\
 .ace_br1 {border-top-left-radius    : 3px;}\
 .ace_br2 {border-top-right-radius   : 3px;}\
@@ -17550,6 +17554,7 @@ var VirtualRenderer = function(container, theme) {
         return Math.max(this.$size.scrollerWidth - 2 * this.$padding, Math.round(charCount * this.characterWidth));
     };
     this.updateFrontMarkers = function() {
+        console.log('[17556] updateFrontMarkets');
         this.$markerFront.setMarkers(this.session.getMarkers(true));
         this.$loop.schedule(this.CHANGE_MARKER_FRONT);
     };

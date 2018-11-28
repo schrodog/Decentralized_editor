@@ -270,7 +270,7 @@ module.exports = function (Y/* :any */) {
 
       const initOtherCursor = (editor, position) => {
         let marker = {}
-        marker.cursor = [position]
+        marker.cursors = [position]
         marker.update = function(html, markerLayer, session, config) {
           let start = config.firstRow, end = config.lastRow;
           let cursors = this.cursors
@@ -281,17 +281,21 @@ module.exports = function (Y/* :any */) {
                   } else if (pos.row > end) {
                       break
                   } else {
-                      // compute cursor position on screen
-                      // this code is based on ace/layer/marker.js
-                      var screenPos = session.documentToScreenPosition(pos)
+                      // compute cursor position on screen this code is based on ace/layer/marker.js
+                      // let screenPos = session.documentToScreenPosition(pos)
+                      let height = config.lineHeight;
+                      let width = config.characterWidth;
+                      // let top = markerLayer.$getTop(screenPos.row, config);
+                      // let left = markerLayer.$padding + screenPos.column * width;
+                      let left = markerLayer.$padding + 
+                        (session.$bidiHandler.isBidiRow(pos.row, position.row)
+                        ? session.$bidiHandler.getPosLeft(pos.column)
+                        : pos.column * config.characterWidth);
 
-                      var height = config.lineHeight;
-                      var width = config.characterWidth;
-                      var top = markerLayer.$getTop(screenPos.row, config);
-                      var left = markerLayer.$padding + screenPos.column * width;
+                      let top = (pos.row - config.firstRowScreen) * config.lineHeight;
                       // can add any html here
                       html.push(
-                          "<div class='MyCursorClass' style=''",
+                          "<div class='MyCursorClass' style='",
                           "height:", height, "px;",
                           "top:", top, "px;",
                           "left:", left, "px; width:", width, "px'></div>"
@@ -307,6 +311,7 @@ module.exports = function (Y/* :any */) {
         }
         marker.session = editor.session;
         marker.session.addDynamicMarker(marker, true)
+        return marker
       }
 
       // update other cursors || pass other message
@@ -321,11 +326,31 @@ module.exports = function (Y/* :any */) {
                 setTimeout(() => {
                   // console.log('bingo[269]', this.userId)
                   const ref = window.env.split.$editors[data.editorIndex]
-                  initOtherCursor(ref, data.pos)
+                  // if (global.cursorIndex && global.otherMarker) {
+                  //   if (data.editorIndex !== global.cursorIndex){
+                  //     let win = window.env.split.$editors[global.cursorIndex]
+                  //     let elem = win.container.getElementsByClassName("MyCursorClass")[0].parentNode
+                  //     win.renderer.session.removeMarker(global.otherMarker.id)
+                  //     console.log('[334]', global.cursorIndex, data.editorIndex)
+                  //     while (elem.firstChild){
+                  //       console.log('[336]', elem)
+                  //       elem.removeChild(elem.firstChild)
+                  //     }
+                  //   }
+                  // }
+                  if (! global.otherMarker) global.otherMarker = {}
+
+                  if (!global.otherMarker[data.editorIndex]){
+                    global.otherMarker[data.editorIndex] = initOtherCursor(ref, data.pos)
+                  } else {
+                    // console.log('Connector.js[329]', global.otherMarker);
+                    global.otherMarker[data.editorIndex].cursors = [data.pos]
+                    global.otherMarker[data.editorIndex].redraw()
+                  }
 
                   // const Cursor = ref.renderer.$cursorLayer
                   // Cursor.updateOtherCursor(data.pos, Cursor.cursors[1], Cursor.config, ref)
-                }, 15)
+                }, 10)
               } else {
                 let editor = window.env.split.getEditor(data.index)
                 let fullPath = path.join(window.currentDirectory, data.path)
