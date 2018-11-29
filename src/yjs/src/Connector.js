@@ -339,6 +339,12 @@ module.exports = function (Y/* :any */) {
                   //   }
                   // }
                   if (! global.otherMarker) global.otherMarker = {}
+                  if (! global.currentIndex) global.currentIndex = data.editorIndex
+                  else if (global.currentIndex !== data.editorIndex){
+                    global.otherMarker[global.currentIndex].cursors = []
+                    global.otherMarker[global.currentIndex].redraw()
+                    global.currentIndex = data.editorIndex
+                  }
 
                   if (!global.otherMarker[data.editorIndex]){
                     global.otherMarker[data.editorIndex] = initOtherCursor(ref, data.pos)
