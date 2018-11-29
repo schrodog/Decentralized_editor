@@ -348,6 +348,10 @@ module.exports = function (Y/* :any */) {
                     global.otherMarker[global.currentRelPath].cursors = []
                     global.otherMarker[global.currentRelPath].redraw()
                     global.currentRelPath = data.relPath
+                    editor.header.textContent = data.path
+                    editor.relPath = data.relPath
+
+                    let editor = window.env.split.getEditor(data.index)
                   }
 
                   console.log('Connector.js[349]', data.relPath);
@@ -363,7 +367,10 @@ module.exports = function (Y/* :any */) {
                   // Cursor.updateOtherCursor(data.pos, Cursor.cursors[1], Cursor.config, ref)
                 }, 10)
               } else {
+
                 let editor = window.env.split.getEditor(data.index)
+                if(!editor) return;
+                console.log('[368]', data.filename, data.index, editor)
                 let fullPath = path.join(window.currentDirectory, data.path)
                 editor.header.textContent = data.filename
                 editor.filePath = fullPath

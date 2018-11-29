@@ -302,7 +302,7 @@ function extend (Y) {
               length = delta.lines.join('\n').length
               self.delete(start, length)
             } else if (delta.type === 'changeCursor') {
-              self.cursor(aceInstance.getCursorPosition(), window.env.split.$cEditor.relPath || '')//window.env.currentEditorIndex)
+              self.cursor(aceInstance.getCursorPosition(), window.env.split.$cEditor.relPath || '', window.env.currentEditorIndex, window.env.split.$cEditor.header.textContent)
 
             } else if (delta.type === 'changeFile'){
               console.log('[306] change file')
