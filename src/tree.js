@@ -192,6 +192,7 @@ function TreeView(root, container, options) {
             const editor = window.env.split.getCurrentEditor()
             editor.header.textContent = node_cur.toString()
             editor.filePath = fullPath
+            editor.relPath = relPath
             editor.session.doc.setValue(text)
             editor.session.setMode(mode.mode)
             editor.session.modeName = mode.name

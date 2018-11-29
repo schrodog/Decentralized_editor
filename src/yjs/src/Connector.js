@@ -325,13 +325,17 @@ module.exports = function (Y/* :any */) {
               if (type === 'Cursor'){
                 setTimeout(() => {
                   // console.log('bingo[269]', this.userId)
-                  const ref = window.env.split.$editors[data.editorIndex]
+                  // const ref = window.env.split.$editors[data.relPath]
+                  const ref = window.env.split.$editors.filter(x => x.relPath == data.relPath)[0]
+
+                  if (!ref) return;
+
                   // if (global.cursorIndex && global.otherMarker) {
-                  //   if (data.editorIndex !== global.cursorIndex){
+                  //   if (data.relPath !== global.cursorIndex){
                   //     let win = window.env.split.$editors[global.cursorIndex]
                   //     let elem = win.container.getElementsByClassName("MyCursorClass")[0].parentNode
                   //     win.renderer.session.removeMarker(global.otherMarker.id)
-                  //     console.log('[334]', global.cursorIndex, data.editorIndex)
+                  //     console.log('[334]', global.cursorIndex, data.relPath)
                   //     while (elem.firstChild){
                   //       console.log('[336]', elem)
                   //       elem.removeChild(elem.firstChild)
@@ -339,19 +343,20 @@ module.exports = function (Y/* :any */) {
                   //   }
                   // }
                   if (! global.otherMarker) global.otherMarker = {}
-                  if (! global.currentIndex) global.currentIndex = data.editorIndex
-                  else if (global.currentIndex !== data.editorIndex){
-                    global.otherMarker[global.currentIndex].cursors = []
-                    global.otherMarker[global.currentIndex].redraw()
-                    global.currentIndex = data.editorIndex
+                  if (! global.currentRelPath) global.currentRelPath = data.relPath
+                  else if (global.currentRelPath !== data.relPath){
+                    global.otherMarker[global.currentRelPath].cursors = []
+                    global.otherMarker[global.currentRelPath].redraw()
+                    global.currentRelPath = data.relPath
                   }
 
-                  if (!global.otherMarker[data.editorIndex]){
-                    global.otherMarker[data.editorIndex] = initOtherCursor(ref, data.pos)
+                  console.log('Connector.js[349]', data.relPath);
+
+                  if (!global.otherMarker[data.relPath]){
+                    global.otherMarker[data.relPath] = initOtherCursor(ref, data.pos)
                   } else {
-                    // console.log('Connector.js[329]', global.otherMarker);
-                    global.otherMarker[data.editorIndex].cursors = [data.pos]
-                    global.otherMarker[data.editorIndex].redraw()
+                    global.otherMarker[data.relPath].cursors = [data.pos]
+                    global.otherMarker[data.relPath].redraw()
                   }
 
                   // const Cursor = ref.renderer.$cursorLayer
@@ -498,17 +503,6 @@ module.exports = function (Y/* :any */) {
           } else if (message.type === 'update' && canWrite(auth) && !message._str) {
             console.log('Connector.js[376]', auth, this.syncingClients);
             if (this.forwardToSyncingClients) {
-              // only send opponent's cursor position
-              // if (message.struct === 'Cursor') {
-              //   for (var client of this.syncingClients) {
-              //     if (sender !== client) {
-              //       console.log('Connector.js[398]', sender)
-              //       this.send(client, message)
-              //     }
-              //   }
-              // } else {
-              // }
-
               for (var client of this.syncingClients) {
                 console.log('Connector.js[404]',client,message);
                 this.send(client, message)

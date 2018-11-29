@@ -13,7 +13,7 @@ function loadEditor() {
 
   // connect to self hosted editor
   let newWin = new BrowserWindow({width: 1600, height: 1000})
-  newWin.webContents.openDevTools()
+  // newWin.webContents.openDevTools()
 
   newWin.loadURL(`http://localhost:${global.portNumber || 3001}`)
   newWin.on('close', () => newWin = null)
@@ -47,14 +47,14 @@ function loadEditor() {
 }
 
 function createWindow(){
-  mainWindow = new BrowserWindow({width: 1600, height: 1000})
+  mainWindow = new BrowserWindow({width: 1000, height: 600})
 
   console.log('args', process.argv)
   global.portNumber = process.argv[2]
 
   
   mainWindow.loadFile("./cover.html")
-  mainWindow.webContents.openDevTools()
+  // mainWindow.webContents.openDevTools()
   mainWindow.webContents.on('did-finish-load', () => {
     mainWindow.webContents.send('get-portNum', global.portNumber)
   })

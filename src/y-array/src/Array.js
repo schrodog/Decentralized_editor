@@ -291,7 +291,7 @@ function extend (Y) {
       eventHandler.awaitAndPrematurelyCall(dels)
     }
 
-    cursor(pos, index){
+    cursor(pos, path){
       console.log('Array.js[292]', 'pos',pos);
       if (typeof pos.row !== 'number' && typeof pos.column !== 'number') {
         throw new Error('pos fields must be a number!')
@@ -317,7 +317,7 @@ function extend (Y) {
         ops: [{
           length: 1,
           struct: 'Delete',
-          target: [{pos: pos, editorIndex: index}, 'Cursor']
+          target: [{pos: pos, relPath: path}, 'Cursor']
         }],
         room: 'ace-example'
       }
