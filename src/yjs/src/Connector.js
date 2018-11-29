@@ -348,17 +348,19 @@ module.exports = function (Y/* :any */) {
                     global.otherMarker[global.currentRelPath].cursors = []
                     global.otherMarker[global.currentRelPath].redraw()
                     global.currentRelPath = data.relPath
-                    editor.header.textContent = data.path
-                    editor.relPath = data.relPath
-
-                    let editor = window.env.split.getEditor(data.index)
+                    
                   }
 
                   console.log('Connector.js[349]', data.relPath);
 
+                  let editor = window.env.split.getEditor(data.index)
+                  editor.header.textContent = data.path
+                  editor.relPath = data.relPath
+
                   if (!global.otherMarker[data.relPath]){
                     global.otherMarker[data.relPath] = initOtherCursor(ref, data.pos)
                   } else {
+
                     global.otherMarker[data.relPath].cursors = [data.pos]
                     global.otherMarker[data.relPath].redraw()
                   }
