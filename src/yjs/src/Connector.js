@@ -367,6 +367,7 @@ module.exports = function (Y/* :any */) {
                 let fullPath = path.join(window.currentDirectory, data.path)
                 editor.header.textContent = data.filename
                 editor.filePath = fullPath
+                editor.relPath = data.path
               }
               return;
             } else {
